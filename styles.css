@@ -1,0 +1,13 @@
+/* xs (smartphone) styles: */
+
+/* everything wider than that: */
+@media (min-width: 576px) { 
+	.nft-img {
+		max-width: 70%;
+		max-height: 35vw;
+	}
+	.nft-4up .nft-col {
+		padding-top: 2%;
+		padding-bottom: 2%;
+	}
+}
