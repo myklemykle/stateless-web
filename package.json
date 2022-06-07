@@ -1,0 +1,18 @@
+{
+  "name": "stateless-web",
+  "version": "1.0.0",
+  "description": "web UI for Stateless",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mykle hansen",
+  "license": "ISC",
+  "dependencies": {
+    "near-api-js": "^0.44.2"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "parcel": "^2.6.0",
+    "process": "^0.11.10"
+  }
+}
