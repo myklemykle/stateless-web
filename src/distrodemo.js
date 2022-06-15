@@ -15,21 +15,38 @@ const config = {
 
 const LOTSAGAS = "300000000000000"; // ATM this is the max gas that can be attached to a transaction
 
-// poor man's jquery
+///////////
+//
+// some simple utils for a simple script.
+// 
+// poor man's jquery:
 const _$ = document.querySelector.bind(document) ;
 
-// show/hide the bootstrap way:
+const defined = (el) => {
+	return (el != null && typeof el !== 'undefined');
+}
+
+// show/hide elements the bootstrap way:
 const bsHide = (el) => {
-	el.classList.add('d-none');
+	if (defined(el))
+		el.classList.add('d-none');
 }
 const bsShow = (el) => {
-	el.classList.remove('d-none');
+	if (defined(el))
+		el.classList.remove('d-none');
 }
 const bsDisable = (el) => {
-	el.disabled = true;
+	if (defined(el))
+		el.disabled = true;
 }
 const bsEnable = (el) => {
-	el.disabled = false;
+	if (defined(el))
+		el.disabled = false;
+}
+
+// reload the same page with no query args:
+const startOver = () => {
+	window.location.href = window.location.origin + window.location.pathname ;
 }
 
 
@@ -53,7 +70,7 @@ export async function init() {
 export const signIn = () => {
   window.wallet.requestSignIn(
     config.distrotron, // contract requesting access
-    // "Example App", // optional
+    "Distrotron", // optional
     // "http://YOUR-URL.com/success", // optional
     // "http://YOUR-URL.com/failure" // optional
   );
@@ -80,7 +97,8 @@ export async function submitMinterForm(e){
 
 	let report = _$("#minter-report .alert-success");
 	let errReport = _$("#minter-report .alert-warning");
-	let payform = _$("#payment-form fieldset");
+	//let payform = _$("#payment-form fieldset");
+	let payform = _$("#payment-form");
 	bsHide(report); bsHide(errReport);
 	
 	// call listMinters() on the contract:
@@ -89,6 +107,7 @@ export async function submitMinterForm(e){
 		// TODO: test the list somewhat.
 		report.innerHTML = "contract '" + mc.contractId + "' has " + minters.length + " minters: <br/>" + minters.join(", ");
 		bsShow(report);
+		bsShow(payform);
 		bsEnable(payform);
 	} catch(err) { 
 		// if errors, report them
@@ -152,21 +171,53 @@ export async function submitPaymentForm(e){
 window.onload = async function(){
 
 	await init();
+	const urlSearchParams = new URLSearchParams(window.location.search);
+	const params = Object.fromEntries(urlSearchParams.entries());
+
 	if (window.wallet.isSignedIn()) {
-		_$("#near-disconnected").style.display = "none";
-		_$("#minter-form").addEventListener("submit", submitMinterForm);
-		_$("#payment-form").addEventListener("submit", submitPaymentForm);
-		_$("#near-connected").style.display = "block";
+		bsHide(_$("#near-disconnected"));
+		bsShow(_$("#near-connected"));
 
 		window.nearAccount = await near.account(wallet.getAccountId());
-		window.nearAccount.__balance = await window.nearAccount.getAccountBalance();
-
 		_$("#accountName").innerHTML = window.nearAccount.accountId;
+
+		window.nearAccount.__balance = await window.nearAccount.getAccountBalance();
 		_$("#accountBalance").innerHTML = utils.format.formatNearAmount(window.nearAccount.__balance.available, 3);
+
+		if (params.errorCode) {
+			// returned here after a tx failure!  
+			// bsHide(_$("#minter-form"));
+			// bsHide(_$("#payment-form"));
+			// bsShow(_$("#tx-error"));
+			// bsHide(_$("#tx-success");
+			//
+			// not going to talk up this error cuz the Wallet should already have reported it.
+			// Just reload the page without query args, to try again.
+			startOver();
+
+		} else if (params.transactionHashes) {
+			// returned here after a tx success!  give a link to the explorer
+			_$("a#tx-hash-btn").href = window.near.config.explorerUrl + '/transactions/' + params.transactionHashes;
+			_$("#start-over-btn").onclick = startOver; 
+			bsHide(_$("#minter-form"));
+			bsHide(_$("#payment-form"));
+			bsHide(_$("#tx-error"));
+			bsShow(_$("#tx-success"));
+
+		} else {
+			bsHide(_$("#tx-error"));
+			bsHide(_$("#tx-success"));
+			bsShow(_$("#minter-form"));
+			bsHide(_$("#payment-form")); // not shown at first ...
+
+			_$("#minter-form").addEventListener("submit", submitMinterForm);
+			_$("#payment-form").addEventListener("submit", submitPaymentForm);
+
+		}
 		
-	} else {
-		_$("#near-connected").style.display = "none";
-		_$("#near-disconnected").style.display = "block";
+	} else { // not signed in
+		bsHide(_$("#near-connected"));
+		bsShow(_$("#near-disconnected"));
 	}
 
 	window.utils = {
