@@ -1,13 +1,37 @@
 /* xs (smartphone) styles: */
+.nft-details p, .nft-details button {
+	font-family: 'Roboto', sans-serif;
+	margin-bottom: 0.5rem;
+}
 
 /* everything wider than that: */
 @media (min-width: 576px) { 
-	.nft-img {
+	.nft-4up .nft-img {
 		max-width: 70%;
 		max-height: 35vw;
 	}
 	.nft-4up .nft-col {
 		padding-top: 2%;
 		padding-bottom: 2%;
+	}
+	.nft-single {
+		max-width: 80rem;
+		margin: auto;
+	}
+	.nft-1up .nft-img {
+		max-width: 80vw;
+		max-height: 80vh;
+	}
+	.nft-details {
+		text-align: left;
+	}
+	.nft-metadata {
+		text-align: left;
+	}
+	.nft-buy .row {
+		text-align: right;
+	}
+	.nft-collectors {
+		text-align: left;
 	}
 }
