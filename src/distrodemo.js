@@ -125,7 +125,7 @@ export async function submitPaymentForm(e){
 		window.wallet.account(), // the connected wallet account
 		config.distrotron, 	// address of the distrotron contract
 		{
-			changeMethods: ["pay_minters", "pay_out"],
+			changeMethods: ["pay_minters", "split_payment"],
 			sender: window.nearAccount, // account object to initialize and sign transactions.
 		}
 	);
