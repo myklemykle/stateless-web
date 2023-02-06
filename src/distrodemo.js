@@ -125,11 +125,7 @@ window.onload = async function() {
 			bsShow(payform);
 			bsEnable(payformForm);
 
-			// decorate & show other UI that needs a valid contract to work
-			let contractName = mc.contractId.split('.');
-			$(".distrotron-contract-firstname").html(contractName.shift());
-			$(".distrotron-contract-restname").html('.' + contractName.join('.'));
-			bsShow($(".distrotron-contract-found"));
+			showPaymentUI(mc.contractId);
 		} catch(err) { 
 			// if errors, report them
 			console.log(err);
@@ -139,11 +135,24 @@ window.onload = async function() {
 		}
 	};
 
+	// decorate & show other UI that needs a valid contract to work
+	function showPaymentUI(mbContractId) {
+			let mbContractName = mbContractId.split('.');
+			$(".distrotron-contract-firstname").html(mbContractName.shift());
+			$(".distrotron-contract-restname").html('.' + mbContractName.join('.'));
+			bsShow($(".distrotron-contract-found"));
+	}
+
 	// Call the distrotron to distribute some NEAR
 	// export async function submitPaymentForm(e){
 
 	async function payMinters(minterContract, totalPayment, reportEl, errReportEl, meta) {
 		bsHide(reportEl); bsHide(errReportEl);
+
+		let allMeta = Object.assign({
+			minterContract: minterContract,
+			totalPayment: totalPayment
+		}, meta);
 
 		const dc = new nearApi.Contract(
 			window.wallet.account(), // the connected wallet account
@@ -161,10 +170,7 @@ window.onload = async function() {
 				},
 				gas: LOTSAGAS, // attached GAS 
 				amount: totalPayment, // attached yoctoNear
-				// walletMeta -- use or not ... returned as query arg "signMeta"
-				// TODO: encode an object here with payment size, target contract, etc.,
-				// and decode on load to improve the post-transaction experience ...
-				// meta: JSON.stringify({minterContract: minterContract, totalPayment: totalPayment})
+				meta: JSON.stringify(allMeta)
 			});
 
 				///////////////////
@@ -210,6 +216,14 @@ window.onload = async function() {
 		const urlSearchParams = new URLSearchParams(window.location.search);
 		const params = Object.fromEntries(urlSearchParams.entries());
 
+		// meta == any previous state reflected back by NEAR Wallet:
+		let meta = {};
+		if (params.signMeta){
+			try { // could be garbled ...
+				meta = JSON.parse(params.signMeta);
+			} catch {}
+		}
+
 		if (window.wallet.isSignedIn()) {
 			bsHide($(".near-disconnected"));
 			bsShow($(".near-connected"));
@@ -224,8 +238,8 @@ window.onload = async function() {
 				// returned here after a tx failure!  
 				// bsHide($("#minter-form"));
 				// bsHide($("#payment-form"));
-				// bsShow($("#tx-error"));
-				// bsHide($("#tx-success");
+				// bsShow($(".tx-error"));
+				// bsHide($(".tx-success");
 				//
 				// not going to talk up this error cuz the Wallet should already have reported it.
 				// Just reload the page without query args, to try again.
@@ -237,12 +251,15 @@ window.onload = async function() {
 				$("#start-over-btn").on('click',startOver); 
 				bsHide($("#minter-form"));
 				bsHide($("#payment-form"));
-				bsHide($("#tx-error"));
-				bsShow($("#tx-success"));
+				bsHide($(".tx-error"));
+				bsShow($(".tx-success"));
+				// if (meta.minterContract) {
+				// 	showPaymentUI(meta.minterContract);
+				// }
 
 			} else {
-				bsHide($("#tx-error"));
-				bsHide($("#tx-success"));
+				bsHide($(".tx-error"));
+				bsHide($(".tx-success"));
 				bsShow($("#minter-form"));
 				bsHide($("#payment-form")); // not shown at first ...
 
