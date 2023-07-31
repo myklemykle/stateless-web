@@ -7,14 +7,47 @@ window.onload = async function() {
 
 	const { utils, connect, keyStores, WalletConnection} = nearApi;
 
+	// Configure NEAR in the calling HTML file inside a <script> block, like so:
+
+		/*
+	  <script>
+    Window.distrotron_config = {
+      networkDomain: "near.org",
+      networkId: "mainnet",
+      contractId: "distribundance.near"
+      // optional overrides:
+      // nodeUrl: "https://rpc." + networkDomain,
+      // walletUrl: "https://wallet." + networkDomain,
+      // helperUrl: "https://helper." + networkDomain,
+      // explorerUrl: "https://explorer." + networkDomain,
+    };
+		</script>
+		*/
+
+	
+	if (typeof Window.distrotron_config === "undefined") {
+		console.warn("distrotron_config not configured");
+		Window.distrotron_config = {}
+	} 
+
+	if (typeof Window.distrotron_config.networkId === "undefined") {
+		console.warn("NEAR networkId unconfigured, defaulting to sandbox");
+		Window.distrotron_config.networkId = "sandbox";
+	}
+
+	if (typeof Window.distrotron_config.networkDomain === "undefined") {
+		console.warn("NEAR network domain unconfigured, defaulting to localhost");
+		Window.distrotron_config.networkDomain = "localhost";
+	}
+
 	const config = {
-		networkId: "testnet",
+		networkId: Window.distrotron_config.networkId,
 		keyStore: new keyStores.BrowserLocalStorageKeyStore(),
-		nodeUrl: "https://rpc.testnet.near.org",
-		walletUrl: "https://wallet.testnet.near.org",
-		helperUrl: "https://helper.testnet.near.org",
-		explorerUrl: "https://explorer.testnet.near.org",
-		distrotron: "distro_test.mykletest.testnet",
+		nodeUrl: Window.distrotron_config.nodeUrl || "https://rpc." + Window.distrotron_config.networkDomain,
+		walletUrl: Window.distrotron_config.walletUrl || "https://wallet." + Window.distrotron_config.networkDomain,
+		helperUrl: Window.distrotron_config.helperUrl || "https://helper." + Window.distrotron_config.networkDomain,
+		explorerUrl: Window.distrotron_config.explorerUrl || "https://explorer." + Window.distrotron_config.networkDomain,
+		contractId: Window.distrotron_config.contractId || "distro_test.near", // a wild guess, probably wrong.
 	};
 
 	const LOTSAGAS = "300000000000000"; // ATM this is the max gas that can be attached to a transaction
@@ -22,9 +55,6 @@ window.onload = async function() {
 	///////////
 	//
 	// some simple utils for a simple script.
-	// 
-	// poor man's jquery:
-	// const _$ = document.querySelector.bind(document) ;
 
 	const defined = (el) => {
 		return (el != null && typeof el !== 'undefined');
@@ -44,7 +74,7 @@ window.onload = async function() {
 	const bsDisable = (el) => {
 		if (defined(el))
 			// el.disabled = true;
-			el.prop('disabled', false);
+			el.prop('disabled', true);
 	}
 	const bsEnable = (el) => {
 		if (defined(el))
@@ -77,9 +107,10 @@ window.onload = async function() {
 	// access key can then be used to connect to NEAR and sign transactions via keyStore
 
 	// export const signIn = () => {
-	const signIn = () => {
-		window.wallet.requestSignIn(
-			config.distrotron, // contract requesting access
+	//const signIn = () => {
+	async function signIn(){
+		await window.wallet.requestSignIn(
+			config.contractId, // contract requesting access
 			"Distrotron", // optional
 			// "http://YOUR-URL.com/success", // optional
 			// "http://YOUR-URL.com/failure" // optional
@@ -156,7 +187,7 @@ window.onload = async function() {
 
 		const dc = new nearApi.Contract(
 			window.wallet.account(), // the connected wallet account
-			config.distrotron, 	// address of the distrotron contract
+			config.contractId, 	// address of the distrotron contract
 			{
 				changeMethods: ["pay_minters", "split_payment"],
 				sender: window.nearAccount, // account object to initialize and sign transactions.
@@ -173,12 +204,16 @@ window.onload = async function() {
 				meta: JSON.stringify(allMeta)
 			});
 
-				///////////////////
-				// The call to a payable method is then REDIRECTED to the NEAR Wallet page! Execution stops here.
-				// Success redirects back to window.location.href 
-				//      with a "?transactionHashes=F6KN3S7MtBfb6ojoxhsuKeLg4fi2xxErRnfkMeek2gfg" query ...
-				/////////
-			
+			///////////////////
+			// Execution stops here.
+			// The call to a payable method is REDIRECTED to the NEAR Wallet page! 
+			// On success, the NEAR wallet page redirects back to our window.location.href 
+			//      with a "?transactionHashes=F6KN3S7MtBfb6ojoxhsuKeLg4fi2xxErRnfkMeek2gfg" query,
+			//      plus whatever metadata was provided in the "meta" field above.
+			//
+			// Therefore, we should never see this message:
+			contract.error("NEAR redireciton failed!"); 
+
 		} catch(err) { 
 			errReportEl.html(err);
 			console.log(err);
