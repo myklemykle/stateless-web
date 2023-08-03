@@ -2,15 +2,21 @@
   "name": "stateless-web",
   "version": "1.0.0",
   "description": "web UI for Stateless",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mykle hansen",
   "license": "ISC",
   "dependencies": {
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5",
+    "@mintbase-js/react": "^0.4.1-beta.0",
+    "@parcel/babel-preset-env": "^2.9.3",
     "near-api-js": "^0.44.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.9",
     "buffer": "^6.0.3",
     "parcel": "^2.6.0",
     "process": "^0.11.10"
