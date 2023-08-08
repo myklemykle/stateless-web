@@ -2,13 +2,17 @@ import React from 'react';
 
 import { createRoot } from 'react-dom/client';
 
-import Nav from './components/Nav';
+import { Selector, Ident } from './components/Nav';
 
-const navTop = document.getElementById('nav-top');
-const navTopRoot = createRoot(navTop);
-navTopRoot.render(<Nav />);
+const selectorTop = document.getElementById('selector-top');
+const selectorTopRoot = createRoot(selectorTop);
+selectorTopRoot.render(<Selector />);
 
-const navBottom = document.getElementById('nav-bottom');
-const navBottomRoot = createRoot(navBottom);
-navBottomRoot.render(<Nav  />);
+const selectorBottom = document.getElementById('selector-bottom');
+const selectorBottomRoot = createRoot(selectorBottom);
+selectorBottomRoot.render(<Selector />);
+
+const ident = document.getElementById('ident');
+const identRoot = createRoot(ident);
+identRoot.render(<Ident />);
 
