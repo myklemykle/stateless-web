@@ -1,5 +1,5 @@
 import React from 'react'
-import { Fragment, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupModal } from "@near-wallet-selector/modal-ui";
@@ -14,66 +14,36 @@ import { setupLedger } from "@near-wallet-selector/ledger";
 import "@near-wallet-selector/modal-ui/styles.css";
 
 // Contains the NFT selection controls.
-export function ViewSelector(){
-    return (
-				<div className="selector nav">
-					 <a className="nav-link mx-1" href="#"><img src={require("../assets/1x_idle.svg")} /></a>
-					 <a className="nav-link mx-1" href="#"><img src={require("../assets/call_new_selection.svg")} /></a>
-					 <a className="nav-link mx-1" href="#"><img src={require("../assets/4x_active.svg")} /></a>
-				</div>
-		)
+export function ViewSelector(props){
+	return (
+		<div className="selector nav">
+			<span className="nav-link mx-1" ><img id="view-1x-button" 	onClick={props.onClick} src={
+				props.viewMode != "4x" ? require("../assets/1x_active.svg") : require("../assets/1x_idle.svg")
+			} /></span>
+			<a className="nav-link mx-1"><img id="view-reselect-button" onClick={props.onClick} src={
+				require("../assets/call_new_selection.svg")
+			} /></a>
+			<a className="nav-link mx-1"><img id="view-4x-button" 			onClick={props.onClick} src={
+			  props.viewMode == "4x" ? require("../assets/4x_active.svg") : require("../assets/4x_idle.svg")
+			} /></a>
+		</div>
+	)
 }
 
 // Contains the user wallet control and the site help link.
-export function Ident(){
-	const [walletSelector, setWalletSelector] = useState(null);
-	let walletModal = useRef(null);
+export function Ident(props){
 
-  useEffect(() => {
-    async function _setup(){
-      let s = await setupWalletSelector({
-        network: "testnet",
-				modules: [ 
-					setupNearWallet(),
-					setupHereWallet(),
-					setupMyNearWallet(),
-					setupSender(),
-					setupMeteorWallet(),
-					setupLedger()
-				]
-
-      });
-      walletModal.current = setupModal(s, {
-        contractId: "test.testnet",
-      });
-			setWalletSelector(s);
-    }
-		if (walletSelector == null) {
-			_setup();
-		}
-
-	});
-
-	function walletClick(e){
-		walletModal.current.show();
-	}
+	let walletConnectedIcon = require("../assets/wallet_connected.svg");
+	let walletNotConnectedIcon = require("../assets/wallet_not_connected.svg");
 
 	function helpClick(e){
 		alert("help!")
 	}
 
 	return (
-		<Fragment>
-			<div className="ident">
-				{ 
-					walletSelector?.isSignedIn() ? 
-				<img src={require("../assets/wallet_connected.svg")} className="pe-2" onClick={walletClick}/> 
-				 : 
-				<img src={require("../assets/wallet_not_connected.svg")} className="pe-2" onClick={walletClick}/> 
-				}
-
-				<img src={require("../assets/help.svg")} onClick={helpClick} /> 
-			</div>
-		</Fragment>
+		<div className="ident">
+			<img src={ props.walletSelector?.isSignedIn() ? walletConnectedIcon : walletNotConnectedIcon } className="pe-2" onClick={props.walletClick}/> 
+			<img src={require("../assets/help.svg")} onClick={helpClick} /> 
+		</div>
 	)
 }
