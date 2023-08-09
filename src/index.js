@@ -11,6 +11,7 @@ function Index(){
 	return(
 
 	<div id="app" className="app">
+		<div id="near-wallet-selector-modal" />
 
 		<div className="header">
 			<nav className="row">

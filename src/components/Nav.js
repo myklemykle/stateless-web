@@ -3,7 +3,15 @@ import { Fragment, useEffect, useState, useRef } from 'react';
 
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupModal } from "@near-wallet-selector/modal-ui";
+
 import { setupNearWallet } from "@near-wallet-selector/near-wallet";
+import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupSender } from "@near-wallet-selector/sender";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupLedger } from "@near-wallet-selector/ledger";
+
+import "@near-wallet-selector/modal-ui/styles.css";
 
 // Contains the NFT selection controls.
 export function ViewSelector(){
@@ -23,34 +31,49 @@ export function Ident(){
 
   useEffect(() => {
     async function _setup(){
-      setWalletSelector(await setupWalletSelector({
+      let s = await setupWalletSelector({
         network: "testnet",
-        modules: [setupNearWallet()],
-      }));
-      walletModal = setupModal(walletSelector, {
+				modules: [ 
+					setupNearWallet(),
+					setupHereWallet(),
+					setupMyNearWallet(),
+					setupSender(),
+					setupMeteorWallet(),
+					setupLedger()
+				]
+
+      });
+      walletModal.current = setupModal(s, {
         contractId: "test.testnet",
       });
+			setWalletSelector(s);
     }
-    _setup();
+		if (walletSelector == null) {
+			_setup();
+		}
 
 	});
 
 	function walletClick(e){
-		//alert("wallet")
-		walletModal.show();
+		walletModal.current.show();
 	}
 
 	function helpClick(e){
 		alert("help!")
 	}
 
-    return (
-			<Fragment>
-				<div id="near-wallet-selector-modal" />
-				<div className="ident">
-					<img src={require("../assets/wallet_not_connected.svg")} className="pe-2" onClick={walletClick}/> 
-					<img src={require("../assets/help.svg")} onClick={helpClick} /> 
-				</div>
-			</Fragment>
-		)
+	return (
+		<Fragment>
+			<div className="ident">
+				{ 
+					walletSelector?.isSignedIn() ? 
+				<img src={require("../assets/wallet_connected.svg")} className="pe-2" onClick={walletClick}/> 
+				 : 
+				<img src={require("../assets/wallet_not_connected.svg")} className="pe-2" onClick={walletClick}/> 
+				}
+
+				<img src={require("../assets/help.svg")} onClick={helpClick} /> 
+			</div>
+		</Fragment>
+	)
 }
