@@ -1,24 +1,43 @@
 {
   "name": "stateless-web",
   "version": "1.0.0",
-  "description": "web UI for Stateless",
-  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "description": "Cooperative NFT marketplace",
+	"main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myklemykle/stateless-web.git"
+  },
   "author": "mykle hansen",
-  "license": "ISC",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/myklemykle/stateless-web/issues"
+  },
+  "homepage": "https://github.com/myklemykle/stateless-web#readme",
   "dependencies": {
-    "@babel/preset-env": "^7.22.9",
-    "@babel/preset-react": "^7.22.5",
-    "@mintbase-js/react": "^0.4.1-beta.0",
-    "@parcel/babel-preset-env": "^2.9.3",
-    "near-api-js": "^0.44.2"
+    "@near-wallet-selector/core": "^8.4.0",
+    "@near-wallet-selector/here-wallet": "^8.4.0",
+    "@near-wallet-selector/ledger": "^8.4.0",
+    "@near-wallet-selector/meteor-wallet": "^8.4.0",
+    "@near-wallet-selector/modal-ui": "^8.4.0",
+    "@near-wallet-selector/my-near-wallet": "^8.4.0",
+    "@near-wallet-selector/near-wallet": "^8.4.0",
+    "@near-wallet-selector/sender": "^8.4.0",
+    "@types/react": "^18.2.19",
+    "near-api-js": "^2.1.4",
+    "parcel": "^2.9.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.9",
+    "@babel/core": "^7.22.10",
     "buffer": "^6.0.3",
-    "parcel": "^2.6.0",
-    "process": "^0.11.10"
+    "https-browserify": "^1.0.0",
+    "process": "^0.11.10",
+    "punycode": "^1.4.1",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.1"
   }
 }
