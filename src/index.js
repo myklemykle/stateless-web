@@ -1,6 +1,11 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+import {
+  createBrowserRouter,
+  RouterProvider,
+	useLoaderData,
+} from "react-router-dom";
 
 // NEAR Wallet Selector: https://docs.near.org/tools/wallet-selector
 import { setupWalletSelector } from "@near-wallet-selector/core";
@@ -15,6 +20,8 @@ import "@near-wallet-selector/modal-ui/styles.css";
 
 import { ViewSelector, Ident } from './components/Nav';
 import { NFT1View, NFT4View, NFTDetailView } from './components/Views';
+
+
 
 function Index(){
 
@@ -52,6 +59,46 @@ function Index(){
     walletModal.current.show();
   }
 
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <App viewMode="4x" walletSelector={walletSelector} walletClick={walletClick}/>
+		},
+		{
+			path: "/rnd4",
+			element: <App viewMode="4x" walletSelector={walletSelector} walletClick={walletClick}/>
+		},
+		{
+			path: "/rnd4/:page",
+			element: <App viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />,
+			loader: function({params}){ return params }
+		},
+		{
+			path: "/rnd",
+			element: <App viewMode="1x" walletSelector={walletSelector} walletClick={walletClick}/>
+		},
+		{
+			path: "/rnd/:page",
+			element: <App viewMode="1x" walletSelector={walletSelector} walletClick={walletClick}/>,
+			loader: function({params}){ return params }
+		},
+		{
+			path: "/id/:nftid",
+			element: <App viewMode="detail" walletSelector={walletSelector} walletClick={walletClick}/>,
+			loader: function({params}){ return params }
+		},
+	]);
+
+	return(
+		<React.StrictMode>
+			<RouterProvider router={router} />
+		</React.StrictMode>
+	)
+}
+
+function App(props){ 
+	const loader = useLoaderData();
+
 	function viewSelectorClick(e){
 		switch (e.target.id) {
 			case "view-1x-button":
@@ -71,18 +118,19 @@ function Index(){
 		switch(vm) {
 			case "1x":
 				return(
-					<NFT1View walletSelector={walletSelector} />
+					<NFT1View walletSelector={props.walletSelector} />
 				)
 			case "4x":
 				return(
-					<NFT4View walletSelector={walletSelector} />
+					<NFT4View walletSelector={props.walletSelector} />
 				)
 			case "detail":
 				return(
-					<NFTDetailView walletSelector={walletSelector} />
+					<NFTDetailView nftid={loader.nftid} walletSelector={props.walletSelector} />
 				)
 		}
 	}
+
 
 	return(
 
@@ -97,12 +145,12 @@ function Index(){
 					</div>
 
 					<div className="nav-top col-sm-auto mt-2 d-none d-sm-block">
-						<ViewSelector id="selector-top" viewMode={viewMode} onClick={viewSelectorClick}/>
+						<ViewSelector id="selector-top" viewMode={props.viewMode} onClick={viewSelectorClick} page={loader?.page}/>
 					</div>
 
 					<div className="col">
 						<div className="float-end mt-2">
-							<Ident id="ident" walletSelector={walletSelector} walletClick={walletClick}/>
+							<Ident id="ident" walletSelector={props.walletSelector} walletClick={props.walletClick}/>
 						</div>
 					</div>
 
@@ -111,7 +159,7 @@ function Index(){
 
 			<div className="maincontent text-center mt-5">
 				
-				{ renderSelectedView(viewMode) }
+				{ renderSelectedView(props.viewMode) }
 
 			</div>
 
@@ -121,7 +169,7 @@ function Index(){
 					<div className="col"></div>
 
 					<div className="nav-btm col-auto mt-2 mb-4 d-block d-sm-none">
-						<ViewSelector id="selector-bottom" className="nav" viewMode={viewMode} onClick={viewSelectorClick} />
+						<ViewSelector id="selector-bottom" className="nav" viewMode={props.viewMode} onClick={viewSelectorClick} />
 					</div>
 
 					<div className="col"></div>

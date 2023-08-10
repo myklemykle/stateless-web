@@ -1,5 +1,6 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react';
+import { Link } from "react-router-dom";
 
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupModal } from "@near-wallet-selector/modal-ui";
@@ -17,15 +18,26 @@ import "@near-wallet-selector/modal-ui/styles.css";
 export function ViewSelector(props){
 	return (
 		<div className="selector nav">
-			<span className="nav-link mx-1" ><img id="view-1x-button" 	onClick={props.onClick} src={
-				props.viewMode != "4x" ? require("../assets/1x_active.svg") : require("../assets/1x_idle.svg")
-			} /></span>
-			<a className="nav-link mx-1"><img id="view-reselect-button" onClick={props.onClick} src={
-				require("../assets/call_new_selection.svg")
-			} /></a>
-			<a className="nav-link mx-1"><img id="view-4x-button" 			onClick={props.onClick} src={
-			  props.viewMode == "4x" ? require("../assets/4x_active.svg") : require("../assets/4x_idle.svg")
-			} /></a>
+
+			<Link className="nav-link mx-1" to={'/rnd'}>
+				<img id="view-1x-button" src={
+					props.viewMode != "4x" ? require("../assets/1x_active.svg") : require("../assets/1x_idle.svg")
+				} />
+			</Link>
+
+			<Link className="nav-link mx-1" to={
+				( props.viewMode != "4x" ?  '/rnd/' : '/rnd4/') + ( props.page ? (parseInt(props.page) + 1) : '1' )
+			}>
+				<img id="view-reselect-button" src={
+					require("../assets/call_new_selection.svg")
+				} />
+			</Link>
+
+			<Link className="nav-link mx-1" to={'/rnd4'}>
+				<img id="view-4x-button" src={
+					props.viewMode == "4x" ? require("../assets/4x_active.svg") : require("../assets/4x_idle.svg")
+				}/>
+			</Link>
 		</div>
 	)
 }
