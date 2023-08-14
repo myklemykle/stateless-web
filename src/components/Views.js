@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import { Fragment, useEffect, useState, useRef } from 'react'; // might not use?
 
 // Display 4 NFT images
@@ -8,20 +9,28 @@ export function NFT4View(props){
         <div className="row align-items-center">
           <div className="col-sm"></div>
           <div className="nft-col col-sm-5">
-            <img src={require("../assets/nfts/sparrow_02_lg.png")} className="nft-img img-fluid"/>
+						<Link to={'/id/666'}>
+							<img src={require("../assets/nfts/sparrow_02_lg.png")} className="nft-img img-fluid"/>
+						</Link>
           </div>
           <div className="nft-col col-sm-5">
-            <img src={require("../assets/nfts/maria_01_lg.png")} className="nft-img img-fluid"/>
+						<Link to={'/id/666'}>
+							<img src={require("../assets/nfts/maria_01_lg.png")} className="nft-img img-fluid"/>
+						</Link>
           </div>
           <div className="col-sm"></div>
         </div>
         <div className="row align-items-center">
           <div className="col-sm"></div>
           <div className="nft-col col-sm-5">
-            <img src={require("../assets/nfts/serste_01_lg.png")} className="nft-img img-fluid"/>
+						<Link to={'/id/666'}>
+							<img src={require("../assets/nfts/serste_01_lg.png")} className="nft-img img-fluid"/>
+						</Link>
           </div>
           <div className="nft-col col-sm-5">
-            <img src={require("../assets/nfts/lenara_lg.png")} className="nft-img img-fluid"/>
+						<Link to={'/id/666'}>
+							<img src={require("../assets/nfts/lenara_lg.png")} className="nft-img img-fluid"/>
+						</Link>
           </div>
           <div className="col-sm"></div>
         </div>
@@ -46,7 +55,9 @@ function NFT1up(props){
 export function NFT1View(props){
 	return (
 		<div className="nft-single nft-1-view">
-			<NFT1up />
+			<Link to={'/id/666'}>
+				<NFT1up />
+			</Link>
 		</div>
 	)
 }
