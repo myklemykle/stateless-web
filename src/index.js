@@ -69,26 +69,27 @@ function App(){
 			element: <Root walletSelector={walletSelector} walletClick={walletClick}/>,
 			children: [
 				{ index: true,
+					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
 					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd4",
-					loader: storeLoader,
+					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
 					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd4/:page",
-					loader: storeLoader,
+					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
 					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd",
-					loader: storeLoader,
+					loader: function(args){ args.params.viewMode = "1x"; return storeLoader(args) },
 					element: <Rnd1 viewMode="1x" walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd/:page",
-					loader: storeLoader,
+					loader: function(args){ args.params.viewMode = "1x"; return storeLoader(args) },
 					element: <Rnd1 viewMode="1x" walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{

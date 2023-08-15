@@ -10,7 +10,7 @@ export default function Header(props){
 					</div>
 
 					<div className="nav-top col-sm-auto mt-2 d-none d-sm-block">
-						<ViewSelector id="selector-top" viewMode={props.viewMode} page={props.page}/>
+						<ViewSelector id="selector-top" viewMode={props.viewMode} count={props.count} page={props.page}/>
 					</div>
 
 					<div className="col">

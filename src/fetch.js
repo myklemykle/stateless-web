@@ -1,3 +1,4 @@
+import { redirect} from 'react-router-dom'
 
 // gallery cache, static to this scope:
 let nftGallery = [];
@@ -35,12 +36,17 @@ function shuffle(array) {
 }
 
 
-export async function storeLoader({params}) {
+export async function storeLoader({params, request}) {
+	// Did we get a reload request after running off the end of the store?
+	if (params.page == -1){
+		// Clear cache and redirect
+		params.nftGallery = nftGallery = [];
+		return redirect(params.viewMode == "4x" ? "/rnd4" : "/rnd");
+	}
 
 	// Is store already loaded? Do we need to reload it?
 	if (nftGallery.length > 0) {
 		params.nftGallery = nftGallery;
-		console.log('loaded')
 		return params
 	}
 

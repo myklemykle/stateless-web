@@ -3,19 +3,23 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 function NFT4up(props){
-	if (props.nft_record) {
+	if (! props.nft_record) {
+		// Here is how we handle missing records, when the total set isn't an even multiple of 4
+		return(
+
+						<div className="no-nft" />
+
+		)
+	} else{ 
 		let nft = props.nft_record
 		return(
+
 						<div className="nft-col col-sm-5">
 							<Link to={'/id/' + nft.metadata_id}>
 								<img src={nft.media_url} className="nft-img img-fluid"/>
 							</Link>
 						</div>
-		)
-	} else{ 
-		// Here is how we handle missing records, when the total set isn't an even multiple of 4
-		return(
-						<div className="no-nft" />
+
 		)
 	}
 }
@@ -26,17 +30,17 @@ export default function Rnd4(props){
 
 	// 4-item array of NFT gallery data blobs
 	const items = [
-		loader.nftGallery[page * 4],
-		loader.nftGallery[page * 4 + 1],
-		loader.nftGallery[page * 4 + 2],
-		loader.nftGallery[page * 4 + 3],
+		loader?.nftGallery[page * 4],
+		loader?.nftGallery[page * 4 + 1],
+		loader?.nftGallery[page * 4 + 2],
+		loader?.nftGallery[page * 4 + 3],
 	];
 
 	return(
 
 		<div className="rnd4">
 
-      <Header viewMode="4x" page={page} walletSelector={props.walletSelector} walletClick={props.walletClick} />
+      <Header viewMode="4x" page={page} count={loader?.nftGallery.length} walletSelector={props.walletSelector} walletClick={props.walletClick} />
 
       <div id="maincontent" className="maincontent text-center mt-5">
 
@@ -57,7 +61,7 @@ export default function Rnd4(props){
 
       </div>
 
-      <Footer viewMode="4x" page={page} />
+      <Footer viewMode="4x" page={page} count={loader?.nftGallery.length} />
 
     </div>
 
