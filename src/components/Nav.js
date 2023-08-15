@@ -2,19 +2,7 @@ import React from 'react'
 import { useEffect, useState, useRef } from 'react';
 import { Link } from "react-router-dom";
 
-import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupModal } from "@near-wallet-selector/modal-ui";
-
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupSender } from "@near-wallet-selector/sender";
-import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupLedger } from "@near-wallet-selector/ledger";
-
-import "@near-wallet-selector/modal-ui/styles.css";
-
-// Contains the NFT selection controls.
+// The NFT selection controls
 export function ViewSelector(props){
 	return (
 		<div className="selector nav">
@@ -42,7 +30,7 @@ export function ViewSelector(props){
 	)
 }
 
-// Contains the user wallet control and the site help link.
+// The user wallet control and the site help link
 export function Ident(props){
 
 	let walletConnectedIcon = require("../assets/wallet_connected.svg");
