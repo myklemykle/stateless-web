@@ -8,6 +8,29 @@ export default function Id(props){
 
 	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
 
+	function NFTCollectors(){
+		if (loader.nft.listings?.length == 0) {
+			return(
+				<div className="nft-no-collectors" />
+			)
+		} else {
+			const collectorList = loader.nft.listings?.map(l => <p className="collector">{l.token.owner}</p>)
+			return(
+					<div className="nft-collectors">
+						<div className="row">
+							<div className="col-sm"></div>
+							<div className="col-sm-8">
+								<p className="label">COLLECTORS:</p>
+								{ collectorList }
+							</div>
+							<div className="col-sm"></div>
+						</div>
+					</div>
+			)
+		}
+	}
+
+
   return (
 		<div className="rnd1">
 
@@ -38,7 +61,7 @@ export default function Id(props){
 										{ tagsList }
 									</p>
 									<p className="nft-mediatype"><span className="label">MEDIA TYPE:</span> {loader.nft.metadata.media_type}</p>
-									<p className="nft-editions"><span className="label">EDITIONS:</span>
+									<p className="nft-editions"><span className="label">EDITIONS: {loader.nft.count}</span>
 									</p>
 								</div>
 								<div className="col-sm"></div>
@@ -53,22 +76,10 @@ export default function Id(props){
 								<div className="col-sm"></div>
 							</div>
 						</div>
-						<div className="nft-collectors">
-							<div className="row">
-								<div className="col-sm"></div>
-								<div className="col-sm-8">
-									<p className="label">COLLECTORS:</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-									<p className="collector">name.near</p>
-								</div>
-								<div className="col-sm"></div>
-							</div>
-						</div>
+
+						<NFTCollectors />
+
+						<div className="row mb-5" />
 					</div>
 				</div>
 

@@ -50,6 +50,10 @@ function sanitizeNFT(n){
 		throw new Error("weird number of minters!")
 	}
 
+	if (n.tokenCount?.aggregate?.count){
+		n.count = n.tokenCount.aggregate.count;
+	}
+
 	// // TODO: our design doesn't exactly support multiple minters, is that a thing?
 	// if (n.minters.length == 1) {
 	// 	n.metadata.minter = n.minters[0]
