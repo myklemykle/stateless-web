@@ -23,7 +23,7 @@ import Rnd4 from './routes/Rnd4'
 import Rnd1 from './routes/Rnd1'
 import Id from './routes/Id'
 
-import { storeLoader } from './fetch.js'
+import { storeLoader, nftLoader } from './fetch.js'
 
 function App(){
 
@@ -94,9 +94,8 @@ function App(){
 				},
 				{
 					path: "/id/:nftid",
-					// loader: nftLoader
+					loader: function(args){ args.params.viewMode = "1x"; return nftLoader(args) },
 					element: <Id walletSelector={walletSelector} walletClick={walletClick} />,
-					loader: function({params}){ return params }
 				},
 			]
 		},

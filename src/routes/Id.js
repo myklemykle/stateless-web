@@ -5,6 +5,9 @@ import Footer from '../components/Footer'
 // Display 1 NFT image with a bunch of metadata & deets
 export default function Id(props){
 	const loader = useLoaderData();
+
+	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
+
   return (
 		<div className="rnd1">
 
@@ -18,28 +21,23 @@ export default function Id(props){
 					<div className="nft-1up">
 						<div className="row align-items-center">
 							<div className="nft-col col-sm-12">
-								<img src={require("../assets/nfts/sparrow_02_lg.png")} className="nft-img img-fluid"/>
+								<img src={loader.nft.metadata.media_url} className="nft-img img-fluid"/>
 							</div>
 						</div>
 					</div>
 
 					<div className="nft-details">
 						<div className="nft-metadata">
-							<div className="row">
+							<div className="row mt-5">
 								<div className="col-sm"></div>
 								<div className="col-sm-8">
-									<p className="nft-title"><span className="label">TITLE:</span> Emotions</p>
-									<p className="nft-description"><span className="label">DESCRIPTION:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  </p>
-									<p className="nft-artist"><span className="label">ARTIST:</span> Simon Wairiuko </p>
+									<p className="nft-title"><span className="label">TITLE:</span> {loader.nft.metadata.title}</p>
+									<p className="nft-description"><span className="label">DESCRIPTION:</span> {loader.nft.metadata.description}</p>
+									<p className="nft-artist"><span className="label">ARTIST:</span> {loader.nft.minter}</p>
 									<p className="nft-tags">
-										<span className="nft-tag">tag</span>
-										<span className="nft-tag">tag</span>
-										<span className="nft-tag">tag</span>
-										<span className="nft-tag">tag</span>
-										<span className="nft-tag">tag</span>
-										<span className="nft-tag">tag</span>
+										{ tagsList }
 									</p>
-									<p className="nft-mediatype"><span className="label">MEDIA TYPE:</span> </p>
+									<p className="nft-mediatype"><span className="label">MEDIA TYPE:</span> {loader.nft.metadata.media_type}</p>
 									<p className="nft-editions"><span className="label">EDITIONS:</span>
 									</p>
 								</div>

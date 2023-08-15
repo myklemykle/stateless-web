@@ -3,18 +3,6 @@ import { redirect} from 'react-router-dom'
 // gallery cache, static to this scope:
 let nftGallery = [];
 
-// Tidy up & fix potential glitches in store data:
-function sanitizeGallery(g){
-	for (let i = 0; i < g.length; i++){
-		// sometimes the media field is a URI, other times it's a fragment.
-		if (g[i].media.match(/^http/)) {
-			g[i].media_url = g[i].media;
-		} else {
-			g[i].media_url = g[i].base_uri + '/' + g[i].media;
-		}
-	}
-}
-
 // Shuffle an array 
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 function shuffle(array) {
@@ -36,6 +24,64 @@ function shuffle(array) {
 }
 
 
+// Tidy up & fix potential glitches in store data:
+function sanitizeGallery(g){
+	for (let i = 0; i < g.length; i++){
+		// sometimes the media field is a URI, other times it's a fragment.
+		if (g[i].media.match(/^http/)) {
+			g[i].media_url = g[i].media;
+		} else {
+			g[i].media_url = g[i].base_uri + '/' + g[i].media;
+		}
+	}
+}
+
+// Tidy up & fix potential glitches in NFT data:
+function sanitizeNFT(n){
+	if (n.metadata.length == 1) {
+		n.metadata = n.metadata[0]
+	} else {
+		throw new Error("weird query result!")
+	}
+
+	if (n.minters.length == 1) {
+		n.minter = n.minters[0].minter
+	} else {
+		throw new Error("weird number of minters!")
+	}
+
+	// // TODO: our design doesn't exactly support multiple minters, is that a thing?
+	// if (n.minters.length == 1) {
+	// 	n.metadata.minter = n.minters[0]
+	// } else {
+	// 	throw new Error("weird number of minters!")
+	// }
+
+	['media','description','title','tags','media_type'].forEach((field)=>{
+		// These are the fields I sometimes see as duplicates, which is lame schematics.
+		// If they are blank in the parent & present in the reference_blob, promote them.
+		if (! n.metadata[field]){
+			if (n.metadata.reference_blob && n.metadata.reference_blob[field])
+				n.metadata[field] = n.metadata.reference_blob[field]
+			else
+				// just blank i guess?
+				n.metadata[field] = null;
+		}
+	})
+
+	if (n.metadata.media.match(/^http/)) {
+		n.metadata.media_url = n.metadata.media;
+	} else {
+		n.metadata.media_url = n.metadata.base_uri + '/' + n.metadata.media;
+	}
+}
+
+// Loader for NFT store browsing.  
+// Fetches the thing-id (metadataId) and an image for every NFT in the store.
+// Tries to clean up a few obvious data glitches -- hopefully not present in mainnet data?
+// Shuffles the list randomly after fetching.
+// Caches the list in nftGallery[].
+//
 export async function storeLoader({params, request}) {
 	// Did we get a reload request after running off the end of the store?
 	if (params.page == -1){
@@ -51,10 +97,9 @@ export async function storeLoader({params, request}) {
 	}
 
 	result = await fetchAllNFTs(window.stateless_config.networkId,
+		window.stateless_config.mintbaseApiKey,
 		window.stateless_config.mintbaseContractId,
-		window.stateless_config.mintbaseApiKey
 	).then(r => r.json())
-	// TODO handle failure?
 	
 	nftGallery = result.data.mb_views_nft_metadata_unburned
 
@@ -64,6 +109,18 @@ export async function storeLoader({params, request}) {
 	// Shuffle!
 	shuffle(nftGallery)
 	params.nftGallery = nftGallery
+	return params
+}
+
+export async function nftLoader({params, request}){
+	// TODO: cache?
+	result = await fetchNFTMeta(window.stateless_config.networkId,
+		window.stateless_config.mintbaseApiKey,
+		params.nftid,
+	).then(r => r.json())
+
+	params.nft = result.data
+	sanitizeNFT(params.nft)
 	return params
 }
 
@@ -82,18 +139,93 @@ export async function queryStore(network, apikey, query){
 	)
 }
 
-export async function fetchAllNFTs(network, storeId, apikey){
+export async function fetchAllNFTs(network, apikey, storeId){
 	return queryStore(network, apikey, galleryQuery(storeId))
 }
 
-export function galleryQuery(storeId) {
-	return 'query MyQuery {\
-  mb_views_nft_metadata_unburned(\
-    where: {nft_contract_id: {_eq: "' + storeId + '"}}\
-  ) {\
-		base_uri\
-    media\
-    metadata_id\
-  }\
-}'
+export async function fetchNFTMeta(network, apikey, metadataId){
+	return queryStore(network, apikey, nftQuery(metadataId))
+}
 
+export function galleryQuery(storeId) {
+	return `query MyGalleryQuery {
+		mb_views_nft_metadata_unburned(
+			where: {nft_contract_id: {_eq: "` + storeId + `"}}
+		) {
+			base_uri
+			media
+			metadata_id
+			reference
+		}
+	}`
+}
+
+// This is a copy of the big metadata query in the broken/beta mintbasejs-data, which seems broken ATM ...
+// as far as I can tell, 'metadataId' is the "thing id" for NFTs that mint multiple. ("id" is for each unique mint.)
+// "burned" are destroyed records that still exist in the chain so we manually ignore them (hmmmmm)
+export function nftQuery(metadataId) {
+	return `query MyQuery {
+		metadata: nft_metadata(
+			where: {
+				id: { _eq: "` + metadataId + `"}
+			}
+		) {
+			title
+			description
+			media
+			reference_blob
+			base_uri
+		}
+
+		tokenCount: nft_tokens_aggregate(
+			where: {
+				metadata_id: { _eq: "` + metadataId + `"}
+			}
+		) {
+			aggregate {
+				count
+			}
+		}
+
+		minters: nft_tokens(
+			distinct_on: minter
+			where: {
+				burned_timestamp: {_is_null: true},
+				metadata_id: { _eq: "` + metadataId + `"}
+			}
+		) {
+			minter
+		}
+
+		simpleSaleCount: mb_views_active_listings_aggregate (
+			where: {
+				kind: { _eq: "simple" }
+				metadata_id: { _eq: "` + metadataId + `"}
+			}
+		) {
+			aggregate {
+			count
+			}
+		}
+
+		listings: mb_views_active_listings (
+			where: {
+				metadata_id: { _eq: "` + metadataId + `"}
+			}
+			limit: 1,
+			order_by: { price: desc }
+		) {
+			kind
+			price
+			market_id
+			token {
+				token_id
+				minter
+				nft_contract_id
+				owner
+				splits
+				royalties
+			}
+		}
+	}`
+}
