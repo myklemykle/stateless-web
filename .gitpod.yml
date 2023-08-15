@@ -6,6 +6,6 @@
 
 tasks:
   - init: npm install
-    command: npx parcel src/index.html
+  - command: npx parcel src/index.html
 
 
