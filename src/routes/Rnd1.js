@@ -28,7 +28,7 @@ export default function Rnd1(props){
 
       </div>
 
-      <Footer viewMode="1x" page={props.page} />
+      <Footer viewMode="1x" page={loader.page} />
 
     </div>
 

@@ -2,6 +2,39 @@
 // gallery cache, static to this scope:
 let nftGallery = [];
 
+// Tidy up & fix potential glitches in store data:
+function sanitizeGallery(g){
+	for (let i = 0; i < g.length; i++){
+		// sometimes the media field is a URI, other times it's a fragment.
+		if (g[i].media.match(/^http/)) {
+			g[i].media_url = g[i].media;
+		} else {
+			g[i].media_url = g[i].base_uri + '/' + g[i].media;
+		}
+	}
+}
+
+// Shuffle an array 
+// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex--
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]]
+  }
+
+  return array
+}
+
+
 export async function storeLoader({params}) {
 
 	// Is store already loaded? Do we need to reload it?
@@ -15,10 +48,16 @@ export async function storeLoader({params}) {
 		window.stateless_config.mintbaseContractId,
 		window.stateless_config.mintbaseApiKey
 	).then(r => r.json())
-	// TODO handle failure
-	nftGallery = params.nftGallery = result.data.mb_views_nft_metadata_unburned
+	// TODO handle failure?
+	
+	nftGallery = result.data.mb_views_nft_metadata_unburned
 
-	// TODO: shuffle!
+	// Cleanup some bad data issues:
+	sanitizeGallery(nftGallery)
+	
+	// Shuffle!
+	shuffle(nftGallery)
+	params.nftGallery = nftGallery
 	return params
 }
 
@@ -46,6 +85,7 @@ export function galleryQuery(storeId) {
   mb_views_nft_metadata_unburned(\
     where: {nft_contract_id: {_eq: "' + storeId + '"}}\
   ) {\
+		base_uri\
     media\
     metadata_id\
   }\

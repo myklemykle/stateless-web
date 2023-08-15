@@ -30,6 +30,8 @@ function App(){
 	const [walletSelector, setWalletSelector] = useState(null);
 	const walletModal = useRef(null); 
 
+	// calling useEffect at top level, to run this setup once at startup.
+	// (Does React have a clearer way to do that?)
   useEffect(() => {
     async function _setup(){
       let s = await setupWalletSelector({
@@ -52,6 +54,7 @@ function App(){
     if (walletSelector == null) {
       _setup();
     }
+		// TODO: report setup failures?
 
   });
 
@@ -65,6 +68,9 @@ function App(){
 			path: "/",
 			element: <Root walletSelector={walletSelector} walletClick={walletClick}/>,
 			children: [
+				{ index: true,
+					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
+				},
 				{
 					path: "/rnd4",
 					loader: storeLoader,
