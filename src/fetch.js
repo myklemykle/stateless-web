@@ -196,6 +196,7 @@ export function nftQuery(metadataId) {
 		tokenCount: nft_tokens_aggregate(
 			where: {
 				metadata_id: { _eq: "` + metadataId + `"}
+				burned_timestamp: {_is_null: true},
 			}
 		) {
 			aggregate {
@@ -205,8 +206,8 @@ export function nftQuery(metadataId) {
 
 		collectors: mb_views_nft_tokens(
 			where: {
-				burned_timestamp: {_is_null: true},
 				metadata_id: { _eq: "` + metadataId + `"}
+				burned_timestamp: {_is_null: true},
 			}
 			distinct_on: owner
 		) {
@@ -217,27 +218,17 @@ export function nftQuery(metadataId) {
 		minters: nft_tokens(
 			distinct_on: minter
 			where: {
-				burned_timestamp: {_is_null: true},
 				metadata_id: { _eq: "` + metadataId + `"}
+				burned_timestamp: {_is_null: true},
 			}
 		) {
 			minter
 		}
 
-		simpleSaleCount: mb_views_active_listings_aggregate (
-			where: {
-				kind: { _eq: "simple" }
-				metadata_id: { _eq: "` + metadataId + `"}
-			}
-		) {
-			aggregate {
-			count
-			}
-		}
-
 		listings: mb_views_active_listings (
 			where: {
 				metadata_id: { _eq: "` + metadataId + `"}
+				kind: { _eq: "simple" }
 			}
 			limit: 1,
 			order_by: { price: desc }

@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/myklemykle/stateless-web#readme",
   "dependencies": {
+    "@mintbase-js/sdk": "^0.4.1-beta.0",
     "@near-wallet-selector/core": "^8.4.0",
     "@near-wallet-selector/here-wallet": "^8.4.0",
     "@near-wallet-selector/ledger": "^8.4.0",

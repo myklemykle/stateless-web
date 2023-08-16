@@ -3,11 +3,21 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { yn2price } from '../util'
 
+import { execute, buy } from '@mintbase-js/sdk';
+import { mbjs } from '@mintbase-js/sdk';
+
+mbjs.config({
+		network: window.stateless_config.networkId,
+		contractAddress: window.stateless_config.mintbaseContractId,
+	//callbackUrl: 'https://mintbase.xyz/success',
+})
+
 // Display 1 NFT image with a bunch of metadata & deets
 export default function Id(props){
 	const loader = useLoaderData();
 
 	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
+
 
 	function NFTCollectors(){
 		if (loader.nft.collectors.length == 0) {
@@ -32,8 +42,32 @@ export default function Id(props){
 	}
 
 
+	function BuyButton(props){
+		const handleBuy = async () => {
+
+			const wallet = await props.walletSelector.wallet();
+			const buyArgs = {
+				contractAddress: window.stateless_config.mintbaseContractId,
+				tokenId: props.listing.token.token_id, 
+				//affiliateAccount: null,
+				//marketId: window.stateless_config.mintbaseContractId,
+				price: BigInt(props.listing.price) }
+
+			await execute(
+				{wallet},
+				buy(buyArgs, 'testnet')
+			);
+
+		}
+
+		return(
+			<button onClick={handleBuy} type="button" className="nft-price nft-buy-button btn btn-outline-dark">{ yn2price(props.listing.price) } NEAR</button>
+		)
+	}
+
+
   return (
-		<div className="rnd1">
+		<div className="id">
 
       <Header viewMode="detail" page={props.page} walletSelector={props.walletSelector} walletClick={props.walletClick} />
 
@@ -73,7 +107,7 @@ export default function Id(props){
 							<div className="row">
 								<div className="col-sm"></div>
 								<div className="col-sm-8">
-									<button type="button" className="nft-price nft-buy-button btn btn-outline-dark">{ yn2price(loader.nft.listing.price) } NEAR</button>
+									<BuyButton walletSelector={props.walletSelector} listing={loader.nft.listing} />
 								</div>
 								<div className="col-sm"></div>
 							</div>
