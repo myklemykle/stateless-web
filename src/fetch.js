@@ -1,7 +1,7 @@
 import { redirect} from 'react-router-dom'
 
 // gallery cache, static to this scope:
-let nftGallery = [];
+let nftGallery = []
 
 // Shuffle an array 
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -29,9 +29,9 @@ function sanitizeGallery(g){
 	for (let i = 0; i < g.length; i++){
 		// sometimes the media field is a URI, other times it's a fragment.
 		if (g[i].media.match(/^http/)) {
-			g[i].media_url = g[i].media;
+			g[i].media_url = g[i].media
 		} else {
-			g[i].media_url = g[i].base_uri + '/' + g[i].media;
+			g[i].media_url = g[i].base_uri + '/' + g[i].media
 		}
 	}
 }
@@ -41,25 +41,37 @@ function sanitizeNFT(n){
 	if (n.metadata.length == 1) {
 		n.metadata = n.metadata[0]
 	} else {
-		throw new Error("weird query result!")
+		throw new Error("weird query result")
 	}
 
 	if (n.minters.length == 1) {
 		n.minter = n.minters[0].minter
 	} else {
+		throw new Error("weird number of minters")
+	}
+
+	// query limits this to one listing (the cheapest) but it can still be zero.
+	if (n.listings.length == 1) {
+		n.listing = n.listings[0]
+	} else if (n.listings.length > 1){
+		throw new Error("weird number of listings")
+	}
+
+
+	if (n.tokenCount?.aggregate?.count){
+		n.count = n.tokenCount.aggregate.count
+	}
+
+	if (n.minters.length == 1) {
+		n.metadata.minter = n.minters[0]
+	} else {
 		throw new Error("weird number of minters!")
 	}
 
-	if (n.tokenCount?.aggregate?.count){
-		n.count = n.tokenCount.aggregate.count;
-	}
-
-	// // TODO: our design doesn't exactly support multiple minters, is that a thing?
-	// if (n.minters.length == 1) {
-	// 	n.metadata.minter = n.minters[0]
-	// } else {
-	// 	throw new Error("weird number of minters!")
-	// }
+	// "collectors" don't include the minter.
+	n.collectors = n.collectors.filter(c => {
+		return (c.owner != n.minter)
+	}); // interestingly, JS requires a semicolon here because the next line starts with an array bracket
 
 	['media','description','title','tags','media_type'].forEach((field)=>{
 		// These are the fields I sometimes see as duplicates, which is lame schematics.
@@ -69,14 +81,14 @@ function sanitizeNFT(n){
 				n.metadata[field] = n.metadata.reference_blob[field]
 			else
 				// just blank i guess?
-				n.metadata[field] = null;
+				n.metadata[field] = null
 		}
 	})
 
 	if (n.metadata.media.match(/^http/)) {
-		n.metadata.media_url = n.metadata.media;
+		n.metadata.media_url = n.metadata.media
 	} else {
-		n.metadata.media_url = n.metadata.base_uri + '/' + n.metadata.media;
+		n.metadata.media_url = n.metadata.base_uri + '/' + n.metadata.media
 	}
 }
 
@@ -90,13 +102,13 @@ export async function storeLoader({params, request}) {
 	// Did we get a reload request after running off the end of the store?
 	if (params.page == -1){
 		// Clear cache and redirect
-		params.nftGallery = nftGallery = [];
-		return redirect(params.viewMode == "4x" ? "/rnd4" : "/rnd");
+		params.nftGallery = nftGallery = []
+		return redirect(params.viewMode == "4x" ? "/rnd4" : "/rnd")
 	}
 
 	// Is store already loaded? Do we need to reload it?
 	if (nftGallery.length > 0) {
-		params.nftGallery = nftGallery;
+		params.nftGallery = nftGallery
 		return params
 	}
 
@@ -189,6 +201,17 @@ export function nftQuery(metadataId) {
 			aggregate {
 				count
 			}
+		}
+
+		collectors: mb_views_nft_tokens(
+			where: {
+				burned_timestamp: {_is_null: true},
+				metadata_id: { _eq: "` + metadataId + `"}
+			}
+			distinct_on: owner
+		) {
+			token_id
+			owner
 		}
 
 		minters: nft_tokens(

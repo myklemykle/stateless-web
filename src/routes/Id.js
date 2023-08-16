@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { yn2price } from '../util'
 
 // Display 1 NFT image with a bunch of metadata & deets
 export default function Id(props){
@@ -9,12 +10,12 @@ export default function Id(props){
 	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
 
 	function NFTCollectors(){
-		if (loader.nft.listings?.length == 0) {
+		if (loader.nft.collectors.length == 0) {
 			return(
 				<div className="nft-no-collectors" />
 			)
 		} else {
-			const collectorList = loader.nft.listings?.map(l => <p className="collector">{l.token.owner}</p>)
+			const collectorList = loader.nft.collectors?.map(l => <p key={l.owner} className="collector">{l.owner}</p>)
 			return(
 					<div className="nft-collectors">
 						<div className="row">
@@ -67,15 +68,19 @@ export default function Id(props){
 								<div className="col-sm"></div>
 							</div>
 						</div>
+						{ (loader.nft.listing) ?
 						<div className="nft-buy">
 							<div className="row">
 								<div className="col-sm"></div>
 								<div className="col-sm-8">
-									<button type="button" className="nft-price nft-buy-button btn btn-outline-dark">100 NEAR</button>
+									<button type="button" className="nft-price nft-buy-button btn btn-outline-dark">{ yn2price(loader.nft.listing.price) } NEAR</button>
 								</div>
 								<div className="col-sm"></div>
 							</div>
 						</div>
+								:
+						<div className="row no-listing mb-5" />
+						}
 
 						<NFTCollectors />
 
