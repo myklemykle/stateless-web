@@ -1,9 +1,15 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 function NFT4up(props){
-	if (! props.nft_record) {
+	const nav = useNavigation()
+
+	if (nav.state === "loading") {
+		return(
+						<div className="nft-loading" />
+		)
+	} else if (! props.nft_record) {
 		// Here is how we handle missing records, when the total set isn't an even multiple of 4
 		return(
 

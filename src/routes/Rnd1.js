@@ -1,14 +1,22 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
 export default function Rnd1(props){
+	const nav = useNavigation()
 	const loader = useLoaderData();
 	const page = loader?.page || 0;
 
   const item = loader.nftGallery[page];
 
-	if (!item) {
+
+  if (nav.state === "loading") {
+    return(
+
+			<div className="nft-loading" />
+
+    )
+	} else if (!item) {
 		// this should not normally happen unless someone types in a bad URL by hand?
 		return(
 
@@ -16,7 +24,6 @@ export default function Rnd1(props){
 
 		)
 	} else { 
-
 		return (
 
 			<div className="rnd1">
