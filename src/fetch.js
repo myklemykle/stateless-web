@@ -24,7 +24,7 @@ function shuffle(array) {
 }
 
 
-// Tidy up & fix potential glitches in store data:
+// Tidy up & fix potential glitches in gallery data:
 function sanitizeGallery(g){
 	for (let i = 0; i < g.length; i++){
 		// sometimes the media field is a URI, other times it's a fragment.
@@ -92,40 +92,86 @@ function sanitizeNFT(n){
 	}
 }
 
-// Loader for NFT store browsing.  
-// Fetches the thing-id (metadataId) and an image for every NFT in the store.
+// Loader for NFT gallery browsing.  
+// Fetches the thing-id (metadataId) and an image for every NFT in the gallery.
 // Tries to clean up a few obvious data glitches -- hopefully not present in mainnet data?
 // Shuffles the list randomly after fetching.
 // Caches the list in nftGallery[].
 //
-export async function storeLoader({params, request}) {
-	// Did we get a reload request after running off the end of the store?
+export async function galleryLoader({params, request}) {
+	// Did we get a reload request after running off the end of the gallery?
 	if (params.page == -1){
-		// Clear cache and redirect
+		// Clear cache 
 		params.nftGallery = nftGallery = []
-		return redirect(params.viewMode == "4x" ? "/rnd4" : "/rnd")
+
+		// Redirect to the same route/path we're on, but with no page number (i.e. page number zero)
+		let url = new URL(request.url)
+		if (url.pathname.match(/\/-1$/)){
+			return redirect(url.pathname.replace(/\/-1$/, '')
+				+ url.search  // if any
+			) 
+		} else {
+			throw new Error("cant grok path to rewrite it")
+		}
 	}
 
-	// Is store already loaded? Do we need to reload it?
+	// Is gallery already loaded? Do we need to reload it?
 	if (nftGallery.length > 0) {
 		params.nftGallery = nftGallery
 		return params
 	}
 
-	result = await fetchAllNFTs(window.stateless_config.networkId,
-		window.stateless_config.mintbaseApiKey,
-		window.stateless_config.mintbaseContractId,
-	).then(r => r.json())
+	// TODO: fetch all, artist or owner? 
+	let result
+	switch(params.queryMode) {
+		case "artist":
+			// Symbol mismatch: we call the person who mints art "artist", but Mintbase calls them "minter"
+			result = await fetchMinterNFTs(window.stateless_config.networkId,
+				window.stateless_config.mintbaseApiKey,
+				window.stateless_config.mintbaseContractId,
+				params.artistId
+			).then(r => r.json())
+			break;
+
+		case "owner":
+			result = await fetchOwnerNFTs(window.stateless_config.networkId,
+				window.stateless_config.mintbaseApiKey,
+				window.stateless_config.mintbaseContractId,
+				params.ownerId
+			).then(r => r.json())
+			break;
+
+		case "all":
+		default:
+			result = await fetchAllNFTs(window.stateless_config.networkId,
+				window.stateless_config.mintbaseApiKey,
+				window.stateless_config.mintbaseContractId,
+			).then(r => r.json())
+	}
 	
-	nftGallery = result.data.mb_views_nft_metadata_unburned
+	nftGallery = result.data.nftList
 
 	// Cleanup some bad data issues:
 	sanitizeGallery(nftGallery)
 	
 	// Shuffle!
 	shuffle(nftGallery)
+
 	params.nftGallery = nftGallery
 	return params
+}
+
+// Wrappers around galleryLoader for 'artist' and 'owner' modes.
+// Seems we have to do this sort of hacky-looking thing, or else uglier things,
+// to get state from the route definition to the route loader.
+export async function artistLoader(args){
+	args.params.queryMode = "artist" 
+	return galleryLoader(args)
+}
+
+export async function ownerLoader(args){
+	args.params.queryMode = "owner" 
+	return galleryLoader(args)
 }
 
 export async function nftLoader({params, request}){
@@ -141,7 +187,7 @@ export async function nftLoader({params, request}){
 }
 
 
-export async function queryStore(network, apikey, query){
+export async function queryGallery(network, apikey, query){
 	// network should be "mainnet" or "testnet"
 	return fetch("https://graph.mintbase.xyz/" + network, { 
 			method: "POST",
@@ -155,18 +201,26 @@ export async function queryStore(network, apikey, query){
 	)
 }
 
-export async function fetchAllNFTs(network, apikey, storeId){
-	return queryStore(network, apikey, galleryQuery(storeId))
+export async function fetchAllNFTs(network, apikey, galleryId){
+	return queryGallery(network, apikey, galleryQuery(galleryId))
+}
+
+export async function fetchMinterNFTs(network, apikey, galleryId, minterId){
+	return queryGallery(network, apikey, minterQuery(galleryId, minterId))
+}
+
+export async function fetchOwnerNFTs(network, apikey, galleryId, ownerId){
+	return queryGallery(network, apikey, ownerQuery(galleryId, ownerId))
 }
 
 export async function fetchNFTMeta(network, apikey, metadataId){
-	return queryStore(network, apikey, nftQuery(metadataId))
+	return queryGallery(network, apikey, nftQuery(metadataId))
 }
 
-export function galleryQuery(storeId) {
+export function galleryQuery(galleryId) {
 	return `query MyGalleryQuery {
-		mb_views_nft_metadata_unburned(
-			where: {nft_contract_id: {_eq: "` + storeId + `"}}
+		nftList: mb_views_nft_metadata_unburned(
+			where: {nft_contract_id: {_eq: "` + galleryId + `"}}
 		) {
 			base_uri
 			media
@@ -175,6 +229,46 @@ export function galleryQuery(storeId) {
 		}
 	}`
 }
+
+export function minterQuery(galleryId,minterId) {
+	return `query MyMinterQuery {
+		nftList: mb_views_nft_metadata_unburned(
+			where: {
+				nft_contract_id: {_eq: "` + galleryId + `"}
+				minter: {_eq: "` + minterId + `"}
+			}
+		) {
+			base_uri
+			media
+			metadata_id
+			reference
+		}
+	}`
+}
+
+// Is it necessary to remove self-owned entries here?  To end up in this table,
+// I think you'd have to actually purchase an NFT from yourself,
+// or buy it back from someone who bought it from you,
+// in which case you sort of did collect it ...
+export function ownerQuery(galleryId,ownerId) {
+	return `query MyOwnerQuery {
+		nftList: mb_views_nft_owned_tokens(
+			where: {
+				nft_contract_id: {_eq: "` + galleryId + `"}
+				owner: {_eq: "` + ownerId + `"}
+			}
+			distinct_on: metadata_id
+		) {
+			base_uri
+			media
+			metadata_id
+			reference
+			owner
+			minter
+		}
+	}`
+}
+
 
 // This is a copy of the big metadata query in the broken/beta mintbasejs-data, which seems broken ATM ...
 // as far as I can tell, 'metadataId' is the "thing id" for NFTs that mint multiple. ("id" is for each unique mint.)

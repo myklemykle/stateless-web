@@ -1,34 +1,34 @@
-import React from 'react';
-import { useEffect, useState, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
+import React from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
 	// useLoaderData,
 	Outlet,
-} from "react-router-dom";
+} from "react-router-dom"
 
 // NEAR Wallet Selector: https://docs.near.org/tools/wallet-selector
-import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupModal } from "@near-wallet-selector/modal-ui";
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupSender } from "@near-wallet-selector/sender";
-import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupLedger } from "@near-wallet-selector/ledger";
-import "@near-wallet-selector/modal-ui/styles.css";
+import { setupWalletSelector } from "@near-wallet-selector/core"
+import { setupModal } from "@near-wallet-selector/modal-ui"
+import { setupNearWallet } from "@near-wallet-selector/near-wallet"
+import { setupHereWallet } from "@near-wallet-selector/here-wallet"
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet"
+import { setupSender } from "@near-wallet-selector/sender"
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet"
+import { setupLedger } from "@near-wallet-selector/ledger"
+import "@near-wallet-selector/modal-ui/styles.css"
 
 import Rnd4 from './routes/Rnd4'
 import Rnd1 from './routes/Rnd1'
 import Id from './routes/Id'
 
-import { storeLoader, nftLoader } from './fetch.js'
+import { galleryLoader, artistLoader, ownerLoader, nftLoader } from './fetch'
 
 function App(){
 
-	const [walletSelector, setWalletSelector] = useState(null);
-	const walletModal = useRef(null); 
+	const [walletSelector, setWalletSelector] = useState(null)
+	const walletModal = useRef(null) 
 
 	// calling useEffect at top level, to run this setup once at startup.
 	// (Does React have a clearer way to do that?)
@@ -45,22 +45,22 @@ function App(){
           setupLedger()
         ]
 
-      });
+      })
       walletModal.current = setupModal(s, {
         contractId: "test.testnet",
-      });
-      setWalletSelector(s);
+      })
+      setWalletSelector(s)
     }
     if (walletSelector == null) {
-      _setup();
+      _setup()
     }
 		// TODO: report setup failures?
 
-  });
+  })
 
 	// click handlers that effect global state are defined here & handed down 
   function walletClick(e){
-    walletModal.current.show();
+    walletModal.current.show()
   }
 
 	const router = createBrowserRouter([
@@ -69,37 +69,61 @@ function App(){
 			element: <Root walletSelector={walletSelector} walletClick={walletClick}/>,
 			children: [
 				{ index: true,
-					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
-					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
+					loader: galleryLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd4",
-					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
-					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
+					loader: galleryLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd4/:page",
-					loader: function(args){ args.params.viewMode = "4x"; return storeLoader(args) },
-					element: <Rnd4 viewMode="4x" walletSelector={walletSelector} walletClick={walletClick} />
+					loader: galleryLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
 				},
+
 				{
 					path: "/rnd",
-					loader: function(args){ args.params.viewMode = "1x"; return storeLoader(args) },
-					element: <Rnd1 viewMode="1x" walletSelector={walletSelector} walletClick={walletClick} />
+					loader: galleryLoader,
+					element: <Rnd1 walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
 					path: "/rnd/:page",
-					loader: function(args){ args.params.viewMode = "1x"; return storeLoader(args) },
-					element: <Rnd1 viewMode="1x" walletSelector={walletSelector} walletClick={walletClick} />
+					loader: galleryLoader,
+					element: <Rnd1 walletSelector={walletSelector} walletClick={walletClick} />
+				},
+
+				{
+					path: "/artist/:artistId",
+					loader: artistLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
+					path: "/artist/:artistId/:page",
+					loader: artistLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+				},
+
+				{
+					path: "/owner/:ownerId",
+					loader: ownerLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/owner/:ownerId/:page",
+					loader: ownerLoader,
+					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+				},
+
+				{
 					path: "/id/:nftid",
-					loader: function(args){ args.params.viewMode = "1x"; return nftLoader(args) },
+					loader: nftLoader,
 					element: <Id walletSelector={walletSelector} walletClick={walletClick} />,
 				},
 			]
 		},
-	]);
+	])
 
 	return(
 		<React.StrictMode>
@@ -120,7 +144,7 @@ function Root(props){
 }
 
 
-const root = createRoot(document.getElementById('app'));
-root.render(<App />);
+const root = createRoot(document.getElementById('app'))
+root.render(<App />)
 
 
