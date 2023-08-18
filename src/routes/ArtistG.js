@@ -1,7 +1,10 @@
 import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { singleSelectorPath, reloadSelectorPath, gridSelectorPath } from '../util'
 
+// TODO: import as much as poss from G.js
+//
 function NFT4up(props){
 	const nav = useNavigation()
 
@@ -30,9 +33,13 @@ function NFT4up(props){
 	}
 }
 
-export default function Rnd4(props){
+export default function ArtistGrid(props){
 	const loader = useLoaderData();
 	const page = loader?.page || 0;
+
+	let singlePath = singleSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "grid", page)
+  let reloadPath = reloadSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "grid", page)
+  let gridPath = gridSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "grid", page)
 
 	// 4-item array of NFT gallery data blobs
 	const items = [
@@ -46,7 +53,19 @@ export default function Rnd4(props){
 
 		<div className="rnd4">
 
-      <Header viewMode="4x" page={page} count={loader?.nftGallery.length} walletSelector={props.walletSelector} walletClick={props.walletClick} />
+      <Header viewMode="4x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery} walletSelector={props.walletSelector} walletClick={props.walletClick} 
+				singlePath={singlePath}
+				reloadPath={reloadPath}
+				gridPath={gridPath}
+			/>
+
+			<div className="artist-info container text-center mt-5">
+				<div className="row">
+					<div className="col">
+						ARTIST: {loader.artistId}
+					</div>
+				</div>
+			</div>
 
       <div id="maincontent" className="maincontent text-center mt-5">
 
@@ -67,7 +86,11 @@ export default function Rnd4(props){
 
       </div>
 
-      <Footer viewMode="4x" page={page} count={loader?.nftGallery.length} />
+      <Footer viewMode="4x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery} 
+				singlePath={singlePath}
+				reloadPath={reloadPath}
+				gridPath={gridPath}
+			/>
 
     </div>
 

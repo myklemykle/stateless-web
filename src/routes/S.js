@@ -1,13 +1,18 @@
 import { Link, useLoaderData, useNavigation } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { singleSelectorPath, reloadSelectorPath, gridSelectorPath } from '../util'
 
-export default function Rnd1(props){
+export default function Single(props){
 	const nav = useNavigation()
 	const loader = useLoaderData();
 	const page = loader?.page || 0;
 
   const item = loader.nftGallery[page];
+
+	let singlePath = singleSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
+	let reloadPath = reloadSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
+	let gridPath = gridSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
 
 
   if (nav.state === "loading") {
@@ -28,7 +33,11 @@ export default function Rnd1(props){
 
 			<div className="rnd1">
 
-				<Header viewMode="1x" count={loader?.nftGallery.length} page={page} walletSelector={props.walletSelector} walletClick={props.walletClick} />
+				<Header viewMode="1x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery} walletSelector={props.walletSelector} walletClick={props.walletClick} 
+					singlePath={singlePath}
+					reloadPath={reloadPath}
+					gridPath={gridPath}
+				/>
 
 				<div id="maincontent" className="maincontent text-center mt-5">
 					<div className="nft-single nft-1-view">
@@ -48,7 +57,11 @@ export default function Rnd1(props){
 
 				</div>
 
-				<Footer viewMode="1x" count={loader?.nftGallery.length} page={page} />
+				<Footer viewMode="1x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery}  
+					singlePath={singlePath}
+					reloadPath={reloadPath}
+					gridPath={gridPath}
+				/>
 
 			</div>
 

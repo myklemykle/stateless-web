@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "react-router-dom";
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { singleSelectorPath, reloadSelectorPath, gridSelectorPath } from '../util'
 import { yn2price } from '../util'
 
 import { execute, buy } from '@mintbase-js/sdk';
@@ -18,6 +19,9 @@ export default function Id(props){
 
 	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
 
+	let singlePath = singleSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
+  let reloadPath = reloadSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
+  let gridPath = gridSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
 
 	function NFTCollectors(){
 		if (loader.nft.collectors.length == 0) {
@@ -25,7 +29,11 @@ export default function Id(props){
 				<div className="nft-no-collectors" />
 			)
 		} else {
-			const collectorList = loader.nft.collectors?.map(l => <p key={l.owner} className="collector">{l.owner}</p>)
+			const collectorList = loader.nft.collectors?.map(l => { return(
+				<Link to={"/owner/" + l.owner} key={l.owner}>
+					<p className="collector">{l.owner}</p>
+				</Link>
+			)})
 			return(
 					<div className="nft-collectors">
 						<div className="row">
@@ -69,7 +77,11 @@ export default function Id(props){
   return (
 		<div className="id">
 
-      <Header viewMode="detail" page={props.page} walletSelector={props.walletSelector} walletClick={props.walletClick} />
+      <Header viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor} walletSelector={props.walletSelector} walletClick={props.walletClick} 
+	      singlePath={singlePath}
+        reloadPath={reloadPath}
+        gridPath={gridPath}
+      />
 
       <div id="maincontent" className="maincontent text-center mt-5">
 
@@ -91,7 +103,9 @@ export default function Id(props){
 								<div className="col-sm-8">
 									<p className="nft-title"><span className="label">TITLE:</span> {loader.nft.metadata.title}</p>
 									<p className="nft-description"><span className="label">DESCRIPTION:</span> {loader.nft.metadata.description}</p>
-									<p className="nft-artist"><span className="label">ARTIST:</span> {loader.nft.minter}</p>
+									<Link to={"/artist/" + loader.nft.minter}>
+										<p className="nft-artist"><span className="label">ARTIST:</span> {loader.nft.minter}</p>
+									</Link>
 									<p className="nft-tags">
 										{ tagsList }
 									</p>
@@ -124,7 +138,11 @@ export default function Id(props){
 
 			</div>
 
-		<Footer viewMode="detail" page={props.page} />
+		<Footer viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor}
+        singlePath={singlePath}
+        reloadPath={reloadPath}
+        gridPath={gridPath}
+      />
 
 	</div>
 

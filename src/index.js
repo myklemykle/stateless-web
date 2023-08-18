@@ -19,8 +19,12 @@ import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet"
 import { setupLedger } from "@near-wallet-selector/ledger"
 import "@near-wallet-selector/modal-ui/styles.css"
 
-import Rnd4 from './routes/Rnd4'
-import Rnd1 from './routes/Rnd1'
+import Grid from './routes/G'
+import OwnerGrid from './routes/OwnerG'
+import ArtistGrid from './routes/ArtistG'
+import Single from './routes/S'
+import ArtistSingle from './routes/ArtistS'
+import OwnerSingle from './routes/OwnerS'
 import Id from './routes/Id'
 
 import { galleryLoader, artistLoader, ownerLoader, nftLoader } from './fetch'
@@ -70,50 +74,80 @@ function App(){
 			children: [
 				{ index: true,
 					loader: galleryLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <Grid walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
-					path: "/rnd4",
+					path: "/g",
 					loader: galleryLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <Grid walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
-					path: "/rnd4/:page",
+					path: "/g/:page",
 					loader: galleryLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <Grid walletSelector={walletSelector} walletClick={walletClick} />
 				},
 
 				{
-					path: "/rnd",
+					path: "/s",
 					loader: galleryLoader,
-					element: <Rnd1 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <Single walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
-					path: "/rnd/:page",
+					path: "/s/:page",
 					loader: galleryLoader,
-					element: <Rnd1 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <Single walletSelector={walletSelector} walletClick={walletClick} />
 				},
 
 				{
 					path: "/artist/:artistId",
 					loader: artistLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistGrid walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
-					path: "/artist/:artistId/:page",
+					path: "/artist/:artistId/g",
 					loader: artistLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistGrid walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/artist/:artistId/g/:page",
+					loader: artistLoader,
+					element: <ArtistGrid walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/artist/:artistId/s",
+					loader: artistLoader,
+					element: <ArtistSingle walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/artist/:artistId/s/:page",
+					loader: artistLoader,
+					element: <ArtistSingle walletSelector={walletSelector} walletClick={walletClick} />
 				},
 
 				{
 					path: "/owner/:ownerId",
 					loader: ownerLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <OwnerGrid walletSelector={walletSelector} walletClick={walletClick} />
 				},
 				{
-					path: "/owner/:ownerId/:page",
+					path: "/owner/:ownerId/g",
 					loader: ownerLoader,
-					element: <Rnd4 walletSelector={walletSelector} walletClick={walletClick} />
+					element: <OwnerGrid walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/owner/:ownerId/g/:page",
+					loader: ownerLoader,
+					element: <OwnerGrid walletSelector={walletSelector} walletClick={walletClick} />
+				},
+				{
+					path: "/owner/:ownerId/s",
+					loader: ownerLoader,
+					element: <OwnerSingle walletSelector={walletSelector} walletClick={walletClick} />,
+				},
+				{
+					path: "/owner/:ownerId/s/:page",
+					loader: ownerLoader,
+					element: <OwnerSingle walletSelector={walletSelector} walletClick={walletClick} />,
 				},
 
 				{

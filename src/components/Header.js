@@ -1,4 +1,5 @@
 import { ViewSelector, Ident } from './Nav';
+import { Link } from "react-router-dom"
 
 export default function Header(props){
 	return(
@@ -6,11 +7,17 @@ export default function Header(props){
 				<nav className="row">
 
 					<div className="logo col">
-						<img src={require("../assets/logo.png")} className="float-start mt-1"/>
+						<Link to="/">
+							<img src={require("../assets/logo.png")} className="float-start mt-1"/>
+						</Link>
 					</div>
 
 					<div className="nav-top col-sm-auto mt-2 d-none d-sm-block">
-						<ViewSelector id="selector-top" viewMode={props.viewMode} count={props.count} page={props.page}/>
+						<ViewSelector id="selector-top" viewMode={props.viewMode} nftGallery={props.nftGallery} page={props.page} nftGalleryCursor={props.nftGalleryCursor} 
+							singlePath={props.singlePath}
+							reloadPath={props.reloadPath}
+							gridPath={props.gridPath}
+						/>
 					</div>
 
 					<div className="col">

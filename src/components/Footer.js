@@ -9,7 +9,11 @@ export default function Footer(props){
           <div className="col"></div>
 
           <div className="nav-btm col-auto mt-2 mb-4 d-block d-sm-none">
-						<ViewSelector id="selector-bottom" className="nav" viewMode={props.viewMode} count={props.count} page={props.page}  />
+						<ViewSelector id="selector-bottom" className="nav" viewMode={props.viewMode} nftGallery={props.nftGallery} nftGalleryCursor={props.nftGalleryCursor} page={props.page} 
+							singlePath={props.singlePath}
+              reloadPath={props.reloadPath}
+              gridPath={props.gridPath}
+						/>
           </div>
 
           <div className="col"></div>
