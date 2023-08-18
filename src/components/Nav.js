@@ -10,7 +10,7 @@ export function ViewSelector(props){
 			<Link className="nav-link mx-1" to={ props.singlePath }>
 				<img id="view-1x-button" src={
 					// showing this as active for both single and detail views
-					props.viewMode != "4x" ?  require("../assets/1x_active.svg") : require("../assets/1x_idle.svg")
+					props.viewMode != "grid" ?  require("../assets/1x_active.svg") : require("../assets/1x_idle.svg")
 				} />
 			</Link>
 
@@ -22,7 +22,7 @@ export function ViewSelector(props){
 
 			<Link className="nav-link mx-1" to={ props.gridPath }>
 				<img id="view-4x-button" src={
-					props.viewMode == "4x" ? require("../assets/4x_active.svg") : require("../assets/4x_idle.svg")
+					props.viewMode == "grid" ? require("../assets/4x_active.svg") : require("../assets/4x_idle.svg")
 				}/>
 			</Link>
 		</div>

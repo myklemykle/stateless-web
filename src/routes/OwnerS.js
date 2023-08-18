@@ -1,80 +1,39 @@
-import { Link, useLoaderData, useNavigation } from "react-router-dom";
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import { singleSelectorPath, reloadSelectorPath, gridSelectorPath } from '../util'
+import { Link, useLoaderData } from "react-router-dom";
+import { Header, Footer} from '../components/HeaderFooter'
+import { OwnerHeading } from '../components/PageHeadings'
+import NFTSingle from '../components/NFTSingle'
 
-// TODO: import as much as possible from S.js
-
-export default function OwnerSingle(props){
-	const nav = useNavigation()
+export default function OwnerSinglePage(props){
 	const loader = useLoaderData();
 	const page = loader?.page || 0;
 
-  const item = loader.nftGallery[page];
-
-	let singlePath = singleSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
-	let reloadPath = reloadSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
-	let gridPath = gridSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "single", page)
+  const nft = loader.nftGallery[page];
 
 
-  if (nav.state === "loading") {
-    return(
 
-			<div className="nft-loading" />
 
-    )
-	} else if (!item) {
-		// this should not normally happen unless someone types in a bad URL by hand?
-		return(
 
-			<div className="no-nft" />
 
-		)
-	} else { 
-		return (
 
-			<div className="rnd1">
+	return(
 
-				<Header viewMode="1x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery} walletSelector={props.walletSelector} walletClick={props.walletClick} 
-					singlePath={singlePath}
-					reloadPath={reloadPath}
-					gridPath={gridPath}
-				/>
+		<div className="single-page owner-single-page">
 
-				<div className="owner-info container text-center mt-5">
-					<div className="row">
-						<div className="col">
-							COLLECTOR: {loader.ownerId}
-						</div>
-					</div>
-				</div>
+			<Header viewMode="single" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery} 
+				walletSelector={props.walletSelector} walletClick={props.walletClick} 
+			/>
 
-				<div id="maincontent" className="maincontent text-center mt-5">
-					<div className="nft-single nft-1-view">
-						<Link to={'/id/' + item.metadata_id}>
+			<div id="maincontent" className="maincontent text-center mt-5">
 
-							{/* duplicated from routes/Id */}
-							<div className="nft-1up">
-								<div className="row align-items-center">
-									<div className="nft-col col-sm-12">
-										<img src={item.media_url} className="nft-img img-fluid"/>
-									</div>
-								</div>
-							</div>
+				<OwnerHeading owner={loader.owner} />
 
-						</Link>
-					</div>
-
-				</div>
-
-				<Footer viewMode="1x" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery}  
-					singlePath={singlePath}
-					reloadPath={reloadPath}
-					gridPath={gridPath}
-				/>
+				<NFTSingle nftRecord={nft} />
 
 			</div>
 
-		)
-	}
+			<Footer viewMode="single" page={page} nftGalleryCursor={loader?.nftGalleryCursor} nftGallery={loader?.nftGallery}  />
+
+		</div>
+
+	)
 }

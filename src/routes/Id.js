@@ -1,12 +1,9 @@
 import { Link, useLoaderData } from "react-router-dom";
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import { singleSelectorPath, reloadSelectorPath, gridSelectorPath } from '../util'
+import { Header, Footer}  from '../components/HeaderFooter'
 import { yn2price } from '../util'
 
 import { execute, buy } from '@mintbase-js/sdk';
 import { mbjs } from '@mintbase-js/sdk';
-
 mbjs.config({
 		network: window.stateless_config.networkId,
 		contractAddress: window.stateless_config.mintbaseContractId,
@@ -18,10 +15,6 @@ export default function Id(props){
 	const loader = useLoaderData();
 
 	const tagsList = loader.nft.metadata.tags?.map(tag => <span className="nft-tag">{tag}</span>)
-
-	let singlePath = singleSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
-  let reloadPath = reloadSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
-  let gridPath = gridSelectorPath(loader.nftGallery, loader.nftGalleryCursor, "detail", 0)
 
 	function NFTCollectors(){
 		if (loader.nft.collectors.length == 0) {
@@ -77,17 +70,14 @@ export default function Id(props){
   return (
 		<div className="id">
 
-      <Header viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor} walletSelector={props.walletSelector} walletClick={props.walletClick} 
-	      singlePath={singlePath}
-        reloadPath={reloadPath}
-        gridPath={gridPath}
+			<Header viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor} 
+				walletSelector={props.walletSelector} walletClick={props.walletClick} 
       />
 
       <div id="maincontent" className="maincontent text-center mt-5">
 
 				<div className="nft-single nft-detail-view">
 
-					{/* duplicated from routes/Rnd1 */}
 					<div className="nft-1up">
 						<div className="row align-items-center">
 							<div className="nft-col col-sm-12">
@@ -138,11 +128,7 @@ export default function Id(props){
 
 			</div>
 
-		<Footer viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor}
-        singlePath={singlePath}
-        reloadPath={reloadPath}
-        gridPath={gridPath}
-      />
+		<Footer viewMode="detail" page={props.page} nftGallery={loader.nftGallery} nftGalleryCursor={loader.nftGalleryCursor} />
 
 	</div>
 
