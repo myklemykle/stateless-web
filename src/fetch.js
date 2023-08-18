@@ -2,6 +2,7 @@ import { redirect} from 'react-router-dom'
 
 // gallery cache, static to this scope:
 let nftGallery = []
+let nftGalleryCursor = 0;
 
 // Shuffle an array 
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -99,6 +100,9 @@ function sanitizeNFT(n){
 // Caches the list in nftGallery[].
 //
 export async function galleryLoader({params, request}) {
+	if (! isNaN(parseInt(params.page)))
+		params.page = parseInt(params.page)
+
 	// Did we get a reload request after running off the end of the gallery?
 	if (params.page == -1){
 		// Clear cache 
@@ -118,6 +122,7 @@ export async function galleryLoader({params, request}) {
 	// Is gallery already loaded? Do we need to reload it?
 	if (nftGallery.length > 0) {
 		params.nftGallery = nftGallery
+		params.nftGalleryCursor = nftGalleryCursor
 		return params
 	}
 
@@ -158,6 +163,7 @@ export async function galleryLoader({params, request}) {
 	shuffle(nftGallery)
 
 	params.nftGallery = nftGallery
+	params.nftGalleryCursor = nftGalleryCursor
 	return params
 }
 
@@ -175,7 +181,6 @@ export async function ownerLoader(args){
 }
 
 export async function nftLoader({params, request}){
-	// TODO: cache?
 	result = await fetchNFTMeta(window.stateless_config.networkId,
 		window.stateless_config.mintbaseApiKey,
 		params.nftid,
@@ -183,6 +188,17 @@ export async function nftLoader({params, request}){
 
 	params.nft = result.data
 	sanitizeNFT(params.nft)
+	
+	// if we have a gallery loaded, set the cursor to this particular NFT's index
+	if (nftGallery.length) {
+		let n = nftGallery.findIndex(o => o.metadata_id == params.nftid)
+		if (n > -1)
+			nftGalleryCursor = n
+	}
+
+
+	params.nftGallery = nftGallery
+	params.nftGalleryCursor = nftGalleryCursor
 	return params
 }
 
