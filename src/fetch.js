@@ -3,6 +3,7 @@ import { redirect} from 'react-router-dom'
 // gallery cache, static to this scope:
 let nftGallery = []
 let nftGalleryCursor = 0;
+let nftGalleryQueryMode = "store" // "store", "artist" or "owner"
 
 // Shuffle an array 
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -103,8 +104,15 @@ export async function galleryLoader({params, request}) {
 	if (! isNaN(parseInt(params.page)))
 		params.page = parseInt(params.page)
 
-	// Did we get a reload request after running off the end of the gallery?
-	if (params.page == -1){
+	if (params.queryMode != nftGalleryQueryMode) {
+		// Change query mode 
+		nftGalleryQueryMode = params.queryMode
+		// Clear cache
+		params.nftGallery = nftGallery = []
+	}
+
+	if (params.page == -1) { 
+		// Handle a reload request after running off the end of the gallery:
 		// Clear cache 
 		params.nftGallery = nftGallery = []
 
@@ -119,17 +127,17 @@ export async function galleryLoader({params, request}) {
 		}
 	}
 
-	// Is gallery already loaded? Do we need to reload it?
 	if (nftGallery.length > 0) {
+		// Gallery is already loaded
 		params.nftGallery = nftGallery
 		params.nftGalleryCursor = nftGalleryCursor
 		return params
 	}
 
-	// TODO: fetch all, artist or owner? 
 	let result
 	switch(params.queryMode) {
 		case "artist":
+			console.log("fetching minter nfts")
 			// Symbol mismatch: we call the person who mints art "artist", but Mintbase calls them "minter"
 			result = await fetchMinterNFTs(window.stateless_config.networkId,
 				window.stateless_config.mintbaseApiKey,
@@ -139,6 +147,7 @@ export async function galleryLoader({params, request}) {
 			break;
 
 		case "owner":
+			console.log("fetching owner nfts")
 			result = await fetchOwnerNFTs(window.stateless_config.networkId,
 				window.stateless_config.mintbaseApiKey,
 				window.stateless_config.mintbaseContractId,
@@ -148,12 +157,14 @@ export async function galleryLoader({params, request}) {
 
 		case "all":
 		default:
+			console.log("fetching all store nfts")
 			result = await fetchAllNFTs(window.stateless_config.networkId,
 				window.stateless_config.mintbaseApiKey,
 				window.stateless_config.mintbaseContractId,
 			).then(r => r.json())
 	}
 	
+	console.log("done fetching")
 	nftGallery = result.data.nftList
 
 	// Cleanup some bad data issues:
