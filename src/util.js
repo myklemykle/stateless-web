@@ -128,6 +128,16 @@ export function gridSelectorPath(nftGallery, nftGalleryCursor, viewMode, current
 	}
 }
 
-
+// clean up the profile data we get back from near.social 
+export function sanitizeProfile(profile, id) {
+	if (profile && profile[id]) { // if we loaded something
+		profile = profile[id].profile
+		if (profile.image) {
+			// this is a HACK until I figure out how near.social really wants this done:
+			profile.image.src = "https://i.near.social/magic/large/https://near.social/magic/img/account/" + id
+		}
+	}
+	return profile
+}
 
 
