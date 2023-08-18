@@ -1,7 +1,13 @@
+/* not sure i'm doing medias right, recheck that ... */
+
 /* xs (smartphone) styles: */
 .nft-details p, .nft-details button {
 	font-family: 'Roboto', sans-serif;
 	margin-bottom: 0.5rem;
+}
+
+.profile-image {
+	width: 100px;
 }
 
 /* everything wider than that: */

@@ -29,17 +29,34 @@ import Id from './routes/Id'
 
 import { galleryLoader, artistLoader, ownerLoader, nftLoader } from './fetch'
 
+import { Contract, connect } from 'near-api-js'
+
+async function initSocialContract(accountId){
+	const nearConnection = await connect({
+		networkId: window.stateless_config.networkId,
+		  nodeUrl: "https://rpc.mainnet.near.org",
+	})
+	const account = await nearConnection.account(accountId)
+
+	c = new Contract( account, "social.near", {
+		viewMethods: [ "get", "keys" ]
+	});
+
+	return c
+}
+
 function App(){
 
 	const [walletSelector, setWalletSelector] = useState(null)
 	const walletModal = useRef(null) 
+	const [socialContract, setSocialContract] = useState(null)
 
 	// calling useEffect at top level, to run this setup once at startup.
 	// (Does React have a clearer way to do that?)
   useEffect(() => {
     async function _setup(){
       let s = await setupWalletSelector({
-        network: "testnet",
+        network: window.stateless_config.networkId,
         modules: [
           setupNearWallet(),
           setupHereWallet(),
@@ -51,16 +68,23 @@ function App(){
 
       })
       walletModal.current = setupModal(s, {
-        contractId: "test.testnet",
+        contractId: window.stateless_config.mintbaseContractId,
       })
       setWalletSelector(s)
+			// window.walletSelector = s //debug
+
+			// connect to near.social for user deets
+			let wallet = await s.wallet()
+			let accounts = await wallet.getAccounts()
+			let accountId = accounts[0].accountId
+			let sc = await initSocialContract(accountId) 
+			setSocialContract(sc)
     }
+
     if (walletSelector == null) {
       _setup()
     }
-		// TODO: report setup failures?
-
-  })
+  }, [walletSelector, walletModal, socialContract])
 
 	// click handlers that effect global state are defined here & handed down 
   function walletClick(e){
@@ -101,53 +125,53 @@ function App(){
 				{
 					path: "/artist/:artistId",
 					loader: artistLoader,
-					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/artist/:artistId/g",
 					loader: artistLoader,
-					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/artist/:artistId/g/:page",
 					loader: artistLoader,
-					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/artist/:artistId/s",
 					loader: artistLoader,
-					element: <ArtistSinglePage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistSinglePage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/artist/:artistId/s/:page",
 					loader: artistLoader,
-					element: <ArtistSinglePage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <ArtistSinglePage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 
 				{
 					path: "/owner/:ownerId",
 					loader: ownerLoader,
-					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/owner/:ownerId/g",
 					loader: ownerLoader,
-					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/owner/:ownerId/g/:page",
 					loader: ownerLoader,
-					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} />
+					element: <OwnerGridPage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>
 				},
 				{
 					path: "/owner/:ownerId/s",
 					loader: ownerLoader,
-					element: <OwnerSinglePage walletSelector={walletSelector} walletClick={walletClick} />,
+					element: <OwnerSinglePage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>,
 				},
 				{
 					path: "/owner/:ownerId/s/:page",
 					loader: ownerLoader,
-					element: <OwnerSinglePage walletSelector={walletSelector} walletClick={walletClick} />,
+					element: <OwnerSinglePage walletSelector={walletSelector} walletClick={walletClick} socialContract={socialContract}/>,
 				},
 
 				{

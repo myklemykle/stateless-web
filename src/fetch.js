@@ -5,6 +5,7 @@ let nftGallery = []
 let nftGalleryCursor = 0;
 let nftGalleryQueryMode = "store" // "store", "artist" or "owner"
 
+
 // Shuffle an array 
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 function shuffle(array) {
@@ -135,33 +136,29 @@ export async function galleryLoader({params, request}) {
 	}
 
 	let result
-	switch(params.queryMode) {
-		case "artist":
-			console.log("fetching minter nfts")
-			// Symbol mismatch: we call the person who mints art "artist", but Mintbase calls them "minter"
-			result = await fetchMinterNFTs(window.stateless_config.networkId,
-				window.stateless_config.mintbaseApiKey,
-				window.stateless_config.mintbaseContractId,
-				params.artistId
-			).then(r => r.json())
-			break;
+	if (params.queryMode?.match(/^artist.*/)) {
+		console.log("fetching minter nfts")
+		// Symbol mismatch: we call the person who mints art "artist", but Mintbase calls them "minter"
+		result = await fetchMinterNFTs(window.stateless_config.networkId,
+			window.stateless_config.mintbaseApiKey,
+			window.stateless_config.mintbaseContractId,
+			params.artistId
+		).then(r => r.json())
 
-		case "owner":
-			console.log("fetching owner nfts")
-			result = await fetchOwnerNFTs(window.stateless_config.networkId,
-				window.stateless_config.mintbaseApiKey,
-				window.stateless_config.mintbaseContractId,
-				params.ownerId
-			).then(r => r.json())
-			break;
+	} else if (params.queryMode?.match(/^owner.*/)) {
+		console.log("fetching owner nfts")
+		result = await fetchOwnerNFTs(window.stateless_config.networkId,
+			window.stateless_config.mintbaseApiKey,
+			window.stateless_config.mintbaseContractId,
+			params.ownerId
+		).then(r => r.json())
 
-		case "all":
-		default:
-			console.log("fetching all store nfts")
-			result = await fetchAllNFTs(window.stateless_config.networkId,
-				window.stateless_config.mintbaseApiKey,
-				window.stateless_config.mintbaseContractId,
-			).then(r => r.json())
+	} else { 
+		console.log("fetching all store nfts")
+		result = await fetchAllNFTs(window.stateless_config.networkId,
+			window.stateless_config.mintbaseApiKey,
+			window.stateless_config.mintbaseContractId,
+		).then(r => r.json())
 	}
 	
 	console.log("done fetching")
@@ -182,12 +179,12 @@ export async function galleryLoader({params, request}) {
 // Seems we have to do this sort of hacky-looking thing, or else uglier things,
 // to get state from the route definition to the route loader.
 export async function artistLoader(args){
-	args.params.queryMode = "artist" 
+	args.params.queryMode = "artist-" + args.params.artistId
 	return galleryLoader(args)
 }
 
 export async function ownerLoader(args){
-	args.params.queryMode = "owner" 
+	args.params.queryMode = "owner" + args.params.ownerId
 	return galleryLoader(args)
 }
 

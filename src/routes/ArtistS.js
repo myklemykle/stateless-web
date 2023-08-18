@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react'
 import { Link, useLoaderData } from "react-router-dom";
 import { Header, Footer} from '../components/HeaderFooter'
 import { ArtistHeading } from '../components/PageHeadings'
 import NFTSingle from '../components/NFTSingle'
+import { sanitizeProfile } from '../util.js'
 
 export default function ArtistSinglePage(props){
 	const loader = useLoaderData();
@@ -9,6 +11,19 @@ export default function ArtistSinglePage(props){
 
   const nft = loader.nftGallery[page];
 
+	const [artistProfile, setArtistProfile] = useState(null)
+
+	useEffect(()=>{
+    async function _get(){
+      ap = await props.socialContract.get({keys:[
+        loader?.artistId + "/profile/**"
+      ]})
+      ap = sanitizeProfile(ap, loader?.artistId)
+      setArtistProfile(ap)
+    }
+    if (props.socialContract && (artistProfile == null) )
+      _get()
+  },[artistProfile])
 
 
 
@@ -25,7 +40,7 @@ export default function ArtistSinglePage(props){
 
 			<div id="maincontent" className="maincontent text-center mt-5">
 
-				<ArtistHeading artist={loader.artist} />
+				<ArtistHeading artist={loader?.artistId} profile={artistProfile} />
 
 				<NFTSingle nftRecord={nft} />
 
