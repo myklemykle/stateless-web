@@ -8,7 +8,7 @@ export function ArtistHeading(props){
             <div className="col">
 							<Link to={"https://near.social/mob.near/widget/ProfilePage?accountId=" + props.artistId} >
 								<div className="profile-image-frame rounded-circle">
-									<img className="profile-image" src={ props.profile && props.profile.image ? props.profile.image.src : require("../assets/vincent.webp") } />
+									<img className="profile-image" src={ props.profile && props.profile.image ? props.profile.image.src : require("../assets/generic_user.jpg") } />
 									</div>
 							</Link>
             </div>
@@ -35,7 +35,9 @@ export function OwnerHeading(props){
           <div className="row mb-4">
             <div className="col">
 							<Link to={"https://near.social/mob.near/widget/ProfilePage?accountId=" + props.ownerId} >
-								<img className="profile-image rounded-circle" src={ props.profile && props.profile.image ? props.profile.image.src : require("../assets/vincent.webp") } />
+								<div className="profile-image-frame rounded-circle">
+									<img className="profile-image" src={ props.profile && props.profile.image ? props.profile.image.src : require("../assets/generic_user.jpg") } />
+								</div>
 							</Link>
             </div>
           </div>
