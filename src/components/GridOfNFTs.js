@@ -35,10 +35,10 @@ export default function GridOfNFTs(props){
 
 				<div className="nft-4up">
           <div className="row align-items-center">
-            <div className="col-sm"></div>
+            <div className="col-sm-1"></div>
             <NFTInGrid nft_record={gridItems[0]}  />
             <NFTInGrid nft_record={gridItems[1]}  />
-            <div className="col-sm"></div>
+            <div className="col-sm-1"></div>
           </div>
           <div className="row align-items-center">
             <div className="col-sm"></div>
