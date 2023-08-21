@@ -17,6 +17,11 @@
     margin: auto;
 }
 
+.nft-4up .nft-col {
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
+
 /* everything wider than that: */
 @media (min-width: 576px) { 
 	.nft-4up .nft-img {
