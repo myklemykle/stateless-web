@@ -10,6 +10,13 @@
 	width: 100px;
 }
 
+.profile-image-frame {
+		width: 100px;
+    height: 100px;
+    overflow: hidden;
+    margin: auto;
+}
+
 /* everything wider than that: */
 @media (min-width: 576px) { 
 	.nft-4up .nft-img {
