@@ -29,6 +29,9 @@ function shuffle(array) {
 
 // Tidy up & fix potential glitches in gallery data:
 function sanitizeGallery(g){
+	// Jettison any records with a null medial field.
+	g = g.filter((nft)=> nft.media != null);
+
 	for (let i = 0; i < g.length; i++){
 		// sometimes the media field is a URI, other times it's a fragment.
 		if (g[i].media.match(/^http/)) {
