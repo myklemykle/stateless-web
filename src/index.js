@@ -45,7 +45,7 @@ async function initSocialContract(accountId){
 	return c
 }
 
-function App(){
+function App(props){
 
 	const [walletSelector, setWalletSelector] = useState(null)
 	const walletModal = useRef(null) 
@@ -181,11 +181,13 @@ function App(){
 				},
 			]
 		},
-	])
+	], {
+		basename: props.basename // undefined defaults to /
+	})
 
 	return(
 		<React.StrictMode>
-			<RouterProvider router={router} />
+			<RouterProvider router={router}/>
 		</React.StrictMode>
 	)
 }
@@ -203,6 +205,6 @@ function Root(props){
 
 
 const root = createRoot(document.getElementById('app'))
-root.render(<App />)
+root.render(<App basename={window.stateless_config.basename}/>)
 
 
