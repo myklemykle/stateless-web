@@ -203,8 +203,15 @@ function Root(props){
 		) 
 }
 
+// Parcel says we can't iterate on process.env for security reasons ...
+if (typeof process.env.NETWORKID !== 'undefined')
+	window.stateless_config.networkId = process.env.NETWORKID;
+if (typeof process.env.MINTBASECONTRACTID !== 'undefined')
+	window.stateless_config.mintbaseContractId = process.env.MINTBASECONTRACTID;
+if (typeof process.env.MINTBASEAPIKEY !== 'undefined')
+	window.stateless_config.mintbaseApiKey = process.env.MINTBASEAPIKEY;
+if (typeof process.env.BASENAME !== 'undefined')
+	window.stateless_config.basename = process.env.BASENAME;
 
 const root = createRoot(document.getElementById('app'))
 root.render(<App basename={window.stateless_config.basename}/>)
-
-
