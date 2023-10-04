@@ -13,21 +13,14 @@
 		<div id="app" />
 
 		<script>
-			// These configuration values will be overridden by environment variables if they are defined:
 			window.stateless_config = {
-				networkId: "testnet", // NETWORKID
-				mintbaseContractId: "statelessart.mintspace2.testnet",  // MINTBASECONTRACTID
-				mintbaseApiKey: "anon", 	// MINTBASEAPIKEY
+				// Environment variables, if present, will override these values:
 
-				// networkId: "mainnet",
-				// mintbaseContractId: "50mint.mintbase1.near",
-				// mintbaseApiKey: "anon",
+				networkId: "testnet", 			// NETWORKID (required)
+				mintbaseContractId: "statelessart.mintspace2.testnet",  // MINTBASECONTRACTID (required)
+				//mintbaseApiKey: "anon", 	// MINTBASEAPIKEY (optional)
+				//basename: "/", 						// BASENAME (optional)
 
-				// networkId: "mainnet",
-				// mintbaseContractId: "gambiarra.mintbase1.near",
-				// mintbaseApiKey: "anon",
-
-				//basename: "/", // BASENAME
 			};
 		</script>
 
