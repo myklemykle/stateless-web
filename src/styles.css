@@ -2,7 +2,8 @@
 
 /* xs (smartphone) styles: */
 .nft-details p, .nft-details button {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'IBM Plex Sans', sans-serif;
+	font-size: 18px;
 	margin-bottom: 0.5rem;
 }
 
