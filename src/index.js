@@ -49,8 +49,8 @@ function App(props){
 
 	const [walletSelector, setWalletSelector] = useState(null)
 	const walletModal = useRef(null) 
-	const [socialContract, setSocialContract] = useState(null)
 
+	const [socialContract, setSocialContract] = useState(null)
 	// calling useEffect at top level, to run this setup once at startup.
 	// (Does React have a clearer way to do that?)
   useEffect(() => {
@@ -94,7 +94,7 @@ function App(props){
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Root walletSelector={walletSelector} walletClick={walletClick}/>,
+			element: <Root walletSelector={walletSelector} walletClick={walletClick} />,
 			children: [
 				{ index: true,
 					loader: galleryLoader,
@@ -187,7 +187,7 @@ function App(props){
 
 	return(
 		<React.StrictMode>
-			<RouterProvider router={router}/>
+			<RouterProvider router={router} />
 		</React.StrictMode>
 	)
 }
@@ -216,5 +216,11 @@ if (typeof process.env.BASENAME !== 'undefined')
 	window.stateless_config.basename = process.env.BASENAME;
 	// or else basename can be left undefined.
 
+if (typeof process.env.SITENAME !== 'undefined')
+	window.stateless_config.sitename= process.env.SITENAME
+else 
+	window.stateless_config.sitename = window.stateless_config.mintbaseContractId.split('.')[0]
+
+
 const root = createRoot(document.getElementById('app'))
-root.render(<App basename={window.stateless_config.basename}/>)
+root.render(<App basename={window.stateless_config.basename} />)

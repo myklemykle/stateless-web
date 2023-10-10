@@ -15,7 +15,7 @@ export function Header(props){
 
 					<div className="logo col">
 						<Link to="/">
-							<img src={require("../assets/logo.png")} className="float-start mt-1"/>
+							<div className="site-name float-start mt-1">{window.stateless_config.sitename}</div>
 						</Link>
 					</div>
 
