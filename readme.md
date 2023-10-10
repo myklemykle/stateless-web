@@ -18,17 +18,16 @@ __CONFIGURE:__
 
 There are three ways (at least) to configure this web interface for a specific Mintbase market contract.
 
-* Copy .env.example to .env, and configure the environment variables within.  
-    * You must set at least NETWORKID and MINTBASECONTRACTID.
-    * You must rebuild the site to see changes take effect.
+* One-click deploy with [Vercel](https://www.vercel.com): [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmyklemykle%2Fstateless-web&env=NETWORKID,MINTBASECONTRACTID&envDescription=NETWORKID%20should%20be%20%22mainnet%22%20or%20%22testnet%22.%20%20See%20.env.example%20for%20more%20details%20on%20required%20%26%20optional%20environment%20variables.&envLink=https%3A%2F%2Fgithub.com%2Fmyklemykle%2Fstateless-web%2Fblob%2Fmaster%2F.env.example)
 
-* If you are deploying on [Vercel](https://www.vercel.com), configure those environment variables directly in the Vercel deployment UI.
-    * You must redeploy to see changes take effect
+* Copy `.env.example` to `.env`, and configure the environment variables within.  
+    * You must set at least `NETWORKID` and `MINTBASECONTRACTID`.
+    * You must rebuild the site to see changes take effect.
 
 * If environment variables are not an option, edit index.html to change the hardcoded values within window.stateless_config.
 
 In all cases, please note:
-    * You must set at least NETWORKID and MINTBASECONTRACTID .
+    * You must set at least `NETWORKID` and `MINTBASECONTRACTID`.
     * You must rebuild/redeploy the site to see config changes take effect.
 
 __BUILD:__
