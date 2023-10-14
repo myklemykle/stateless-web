@@ -6,7 +6,7 @@ You can now display any Mintbase store using the Coötoo UI.
 
 **We offer a minimalistic interface with focus on the art.**
 
-.
+![image](src/assets/mockup_thumb.jpg)
 
 **Prices are not shown by default.** If the art speaks to you, you can open the single view. 
 
@@ -30,7 +30,13 @@ We hope you enjoy this way of viewing NFTs.
 
 *Let’s nourish our innate need for cooperation.*
 
-www.statelessart.org
+
+.
+
+
+**DEMO VIDEO:**
+
+**LIVE DEMO:**
 
 ----
 
