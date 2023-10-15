@@ -39,10 +39,12 @@ We hope you enjoy this way of viewing NFTs.
 **LIVE DEMO:**
 
 ----
+__CONTENTS__
+This application is built with React (logic) and Bootstrap 5 (design).  It uses the NEAR JS Api for contract interaction, the Mintbase GraphQL database for queries, and the NEAR Wallet Selector for wallet interface.  The user profile data is sourced from Near BOS. Parcel.js. is the compilation & deployment tool. npm is the Node/Javascript package manager.
 
-__DEPLOY:__
+__ONE-CLICK DEPLOY:__
 
-* One-click deploy to [Vercel](https://www.vercel.com): 
+* With [Vercel](https://www.vercel.com): 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmyklemykle%2Fstateless-web&env=NETWORKID,MINTBASECONTRACTID&envDescription=NETWORKID%20should%20be%20%22mainnet%22%20or%20%22testnet%22.%20%20See%20.env.example%20for%20more%20details%20on%20required%20%26%20optional%20environment%20variables.&envLink=https%3A%2F%2Fgithub.com%2Fmyklemykle%2Fstateless-web%2Fblob%2Fmaster%2F.env.example&build-command=npx%20parcel%20build%20src%2Findex.html%20--no-scope-hoist%20--public-url%20.%2F&install-command=npm%20install)
 
 
@@ -83,4 +85,5 @@ To generate an optimized site for manual deployment:
 ```
 npx parcel build src/index.html --no-scope-hoist --public-url ./
 ```
+
 
