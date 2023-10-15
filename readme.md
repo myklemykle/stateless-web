@@ -8,7 +8,7 @@ You can now display any Mintbase store using the Coötoo UI.
 
 ![image](src/assets/mockup_thumb.jpg)
 
-**Prices are not shown by default.** If the art speaks to you, you can open the single view. 
+**Prices are not shown by default.** If the art speaks to you, click to see more information. 
 
 Because we recognise sometimes it’s not about buying, but enjoying.
 
@@ -34,9 +34,9 @@ We hope you enjoy this way of viewing NFTs.
 .
 
 
-**DEMO VIDEO:**
+**DEMO VIDEO:** https://youtu.be/xQN59w3IO8U
 
-**LIVE DEMO:**
+**LIVE DEMO:** https://encode-hackathon-demo-ct5pzswt6-mintland-demo.vercel.app/
 
 ----
 __CONTENTS__
