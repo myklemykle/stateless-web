@@ -36,7 +36,7 @@ We hope you enjoy this way of viewing NFTs.
 
 **DEMO VIDEO:** https://youtu.be/xQN59w3IO8U
 
-**LIVE DEMO:**
+**LIVE DEMO:** https://encode-hackathon-demo-ct5pzswt6-mintland-demo.vercel.app/
 
 ----
 
